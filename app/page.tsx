@@ -48,7 +48,7 @@ export default function Home() {
       ),
       title: 'הזדמנות ייחודית',
       description: 'קרקע בתל אביב במקום מנצח, בעלת פוטנציאל עליית ערך גבוה',
-      gradient: 'linear-gradient(135deg, #32CD32 0%, #ffffff 50%, #B8860B 100%)'
+      gradient: 'linear-gradient(135deg, #228B22 0%, #32CD32 50%, #B8860B 100%)'
     },
     {
       icon: (
