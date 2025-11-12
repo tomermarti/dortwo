@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>צומת חולון – מפגש קווים</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --hub-top: 63.5%;
+      --hub-right: 48.5%;
+    }
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: radial-gradient(circle at 20% 15%, #181818 0%, #050505 55%, #000 100%);
+      font-family: 'Arial', sans-serif;
+    }
+    .frame {
+      position: relative;
+      width: 1080px;
+      height: 1350px;
+      border-radius: 40px;
+      overflow: hidden;
+      background: url('map_crop_test.jpg') center/cover no-repeat;
+      box-shadow: 0 48px 140px rgba(0, 0, 0, 0.6);
+    }
+    .frame::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(0,0,0,0) 0%, rgba(0,0,0,0.12) 55%, rgba(0,0,0,0.45) 100%),
+        linear-gradient(0deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.1) 32%, rgba(0,0,0,0.1) 72%, rgba(0,0,0,0.85) 100%);
+      pointer-events: none;
+    }
+
+    .lines {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+
+    .line {
+      position: absolute;
+      top: var(--hub-top);
+      right: var(--hub-right);
+      width: var(--length);
+      height: 12px;
+      transform-origin: right center;
+      transform: rotate(var(--angle));
+    }
+    .line::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      background: var(--color);
+      box-shadow: 0 0 18px rgba(0,0,0,0.45);
+      transform-origin: right center;
+      transform: scaleX(0);
+      animation: drawLine 2.2s ease-out forwards;
+      animation-delay: var(--delay);
+    }
+    .line::after {
+      content: "";
+      position: absolute;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: 4px solid #fff;
+      background: var(--color);
+      top: 50%;
+      right: -16px;
+      transform: translate(50%, -50%) translateX(calc(var(--length) * -1));
+      box-shadow: 0 0 20px rgba(0,0,0,0.35);
+      opacity: 0;
+      animation: meetHub 2.2s cubic-bezier(0.62, 0.1, 0.3, 1) forwards;
+      animation-delay: var(--delay);
+    }
+
+    @keyframes drawLine {
+      0% { transform: scaleX(0); opacity: 0; }
+      20% { opacity: 1; }
+      100% { transform: scaleX(1); opacity: 1; }
+    }
+
+    @keyframes meetHub {
+      0% {
+        opacity: 0;
+        transform: translate(50%, -50%) translateX(calc(var(--length) * -0.9));
+      }
+      25% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 1;
+        transform: translate(50%, -50%) translateX(0);
+      }
+    }
+
+    .hub {
+      position: absolute;
+      top: var(--hub-top);
+      right: var(--hub-right);
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      transform: translate(50%, -50%);
+      display: grid;
+      place-items: center;
+      z-index: 2;
+    }
+    .hub::before {
+      content: "";
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,122,255,0.08), rgba(0,122,255,0));
+      filter: blur(2px);
+      animation: glow 3.4s ease-in-out infinite;
+    }
+    .hub::after {
+      content: "";
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: #ffffff;
+      box-shadow: 0 0 35px rgba(255,255,255,0.6);
+    }
+
+    @keyframes glow {
+      0%, 100% { transform: scale(0.85); opacity: 0.55; }
+      50% { transform: scale(1.05); opacity: 0.95; }
+    }
+  </style>
+</head>
+<body>
+  <div class="frame" aria-label="אנימציה של מפגש שלושה קווים בצומת חולון">
+    <div class="lines">
+      <div class="line" style="--length: 360px; --angle: 122deg; --color: linear-gradient(90deg, rgba(0,44,255,0.15), rgba(0,102,255,0.9)); --delay: 0s;"></div>
+      <div class="line" style="--length: 330px; --angle: -40deg; --color: linear-gradient(90deg, rgba(0,200,0,0.2), rgba(0,200,120,0.9)); --delay: 0.18s;"></div>
+      <div class="line" style="--length: 300px; --angle: 180deg; --color: linear-gradient(90deg, rgba(255,255,255,0.3), rgba(245,245,245,1)); --delay: 0.36s;"></div>
+    </div>
+    <div class="hub"></div>
+  </div>
+</body>
+</html>

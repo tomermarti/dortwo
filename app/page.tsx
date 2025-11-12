@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 export default function Home() {
   const [leadData, setLeadData] = useState({
@@ -9,6 +9,59 @@ export default function Home() {
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitMessage, setSubmitMessage] = useState('')
+  const [isFormExpanded, setIsFormExpanded] = useState(false)
+  const [activeFeature, setActiveFeature] = useState(0)
+  const [scrollY, setScrollY] = useState(0)
+
+  const features = [
+    {
+      icon: (
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+          <polyline points="9 22 9 12 15 12 15 22" />
+        </svg>
+      ),
+      title: 'מגדל ללא מגבלת קומות',
+      description: 'הקרקע מיועדת למגורים מסחר ותעסוקה',
+      gradient: 'linear-gradient(135deg, #228B22 0%, #32CD32 50%, #B8860B 100%)'
+    },
+    {
+      icon: (
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <rect x="3" y="6" width="18" height="12" rx="2" />
+          <circle cx="8" cy="12" r="2" />
+          <circle cx="16" cy="12" r="2" />
+          <line x1="2" y1="18" x2="22" y2="18" />
+        </svg>
+      ),
+      title: 'מפגש תחבורה משולב',
+      description: 'מפגש של ארבעה מוקדי תחבורה: רכבת קלה, מטרו, רכבת ישראל, מסוף אוטובוסים',
+      gradient: 'linear-gradient(135deg, #B8860B 0%, #DAA520 50%, #228B22 100%)'
+    },
+    {
+      icon: (
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <path d="M12 2L2 7l10 5 10-5-10-5z" />
+          <path d="M2 17l10 5 10-5" />
+          <path d="M2 12l10 5 10-5" />
+        </svg>
+      ),
+      title: 'הזדמנות ייחודית',
+      description: 'קרקע בתל אביב במקום מנצח, בעלת פוטנציאל עליית ערך גבוה',
+      gradient: 'linear-gradient(135deg, #32CD32 0%, #ffffff 50%, #B8860B 100%)'
+    },
+    {
+      icon: (
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+          <circle cx="12" cy="10" r="3" />
+        </svg>
+      ),
+      title: 'מקום מרכזי',
+      description: 'ציר מרכזי במקום מתפתח, באיזור בעל פוטנציאל תנופה אדיר!',
+      gradient: 'linear-gradient(135deg, #B8860B 0%, #32CD32 50%, #228B22 100%)'
+    }
+  ]
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLeadData({
@@ -44,74 +97,162 @@ export default function Home() {
     setTimeout(() => setSubmitMessage(''), 5000)
   }
 
-  const handleCallClick = () => {
-    window.location.href = 'tel:+972501234567'
+  const handleWhatsAppClick = () => {
+    const message = encodeURIComponent('שלום, אני מעוניין במידע נוסף על הקרקע בתל אביב')
+    window.location.href = `https://wa.me/97233850585?text=${message}`
   }
 
+  const toggleForm = () => {
+    setIsFormExpanded(!isFormExpanded)
+  }
+
+  const nextFeature = () => {
+    setActiveFeature((prev) => (prev + 1) % features.length)
+  }
+
+  const prevFeature = () => {
+    setActiveFeature((prev) => (prev - 1 + features.length) % features.length)
+  }
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollY(window.scrollY)
+      const scrollPosition = window.innerHeight + window.scrollY
+      const documentHeight = document.documentElement.scrollHeight
+      const threshold = 100
+
+      if (documentHeight - scrollPosition < threshold) {
+        setIsFormExpanded(true)
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  // Auto-rotate carousel
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveFeature((prev) => (prev + 1) % features.length)
+    }, 5000)
+    return () => clearInterval(interval)
+  }, [features.length])
+
   return (
-    <main>
-      {/* Hero Section */}
+    <main className="main-wrapper">
+      {/* Hero Section with Video Background */}
       <section className="hero">
         <div className="hero-video-background">
           <video
             autoPlay
             muted
-            loop
             playsInline
             className="hero-video"
+            style={{ opacity: 0.7 + (scrollY * 0.0003) }}
           >
             <source src="/images/property-video.mp4" type="video/mp4" />
           </video>
           <div className="hero-overlay"></div>
         </div>
-        <div className="hero-content">
-          <div className="exclusive-badge">🔥 בלעדי 🔥</div>
-          <h1 className="gold-title">קרקע יוקרתית למכירה בתל אביב</h1>
-          <div className="price">799,000 ש״ח</div>
-          <p className="subtitle">
-            זכויות בנייה ללא מגבלות • מיקום אסטרטגי בתל אביב ליד מפגש צירי מטרו ורכבת קלה
+        <div className="hero-content" style={{ transform: `translateY(${scrollY * 0.5}px)` }}>
+          <h1 className="main-title animate-fade-in">
+            עתיד תל אביב מתחיל כאן.
+          </h1>
+          <p className="main-description animate-fade-in-delay">
+            השקעה נדירה בקרקע למגורים ללא מגבלת קומות, במפגש התחבורתי הלוהט בישראל – מטרו, רכבת קלה ורכבת ישראל.
           </p>
-          <button className="cta-button" onClick={handleCallClick}>
-            📞 התקשרו עכשיו לפרטים
-          </button>
+          <div className="price-tag animate-fade-in-delay-2">
+            <span className="price-label">החל מ־</span>
+            <span className="price-value">799,000 ₪</span>
+          </div>
+        </div>
+        <div className="scroll-indicator">
+          <div className="mouse"></div>
+          <span>גלול למטה</span>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="features">
+      {/* Floating WhatsApp Button */}
+      <button 
+        className="whatsapp-float" 
+        onClick={handleWhatsAppClick}
+        aria-label="שלחו הודעה בוואטסאפ"
+      >
+        <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+          <path d="M16 0C7.164 0 0 7.164 0 16c0 2.825.739 5.607 2.137 8.048L.069 31.931l8.115-2.03A15.93 15.93 0 0016 32c8.836 0 16-7.164 16-16S24.836 0 16 0zm0 29.333c-2.547 0-5.043-.728-7.189-2.104l-.515-.33-5.328 1.332 1.365-5.197-.363-.535A13.268 13.268 0 012.667 16c0-7.364 5.969-13.333 13.333-13.333S29.333 8.636 29.333 16 23.364 29.333 16 29.333z"/>
+          <path d="M23.189 19.36c-.381-.191-2.257-1.113-2.607-1.24-.349-.127-.603-.191-.857.191-.254.381-.984 1.24-1.206 1.494-.222.254-.444.286-.825.095-.381-.191-1.609-.593-3.065-1.891-1.133-.984-1.897-2.201-2.119-2.582-.222-.381-.024-.587.167-.777.171-.171.381-.444.571-.667.191-.222.254-.381.381-.635.127-.254.063-.476-.032-.667-.095-.191-.857-2.065-1.175-2.828-.31-.743-.625-.643-.857-.655-.222-.011-.476-.013-.73-.013s-.667.095-.984.476c-.349.381-1.333 1.302-1.333 3.175s1.365 3.683 1.556 3.937c.191.254 2.688 4.104 6.512 5.755.91.393 1.619.628 2.171.803.913.29 1.744.249 2.401.151.732-.109 2.257-.923 2.575-1.815.317-.891.317-1.655.222-1.815-.095-.159-.349-.254-.73-.444z"/>
+        </svg>
+      </button>
+
+      {/* Features Carousel Section */}
+      <section className="features-carousel-section">
+        <div className="section-header">
+          <h2 className="section-title">למה לבחור בקרקע הזו?</h2>
+          <p className="section-subtitle">יתרונות שאי אפשר להתעלם מהם</p>
+        </div>
+        
+        <div className="carousel-container">
+          <button className="carousel-btn carousel-btn-prev" onClick={prevFeature} aria-label="קודם">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="carousel-arrow-prev">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
+          
+          <div className="carousel-track">
+            {features.map((feature, index) => (
+              <div
+                key={index}
+                className={`carousel-card ${index === activeFeature ? 'active' : ''} ${
+                  index === (activeFeature - 1 + features.length) % features.length ? 'prev' : ''
+                } ${index === (activeFeature + 1) % features.length ? 'next' : ''}`}
+              >
+                <div className="card-inner" style={{ background: `linear-gradient(135deg, white 0%, #fafafa 100%)` }}>
+                  <div className="feature-icon-large" style={{ 
+                    background: feature.gradient,
+                    WebkitMaskImage: 'linear-gradient(black, black)',
+                    maskImage: 'linear-gradient(black, black)'
+                  }}>
+                    {feature.icon}
+                  </div>
+                  <h3 className="feature-title">{feature.title}</h3>
+                  <p className="feature-description">{feature.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          <button className="carousel-btn carousel-btn-next" onClick={nextFeature} aria-label="הבא">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="carousel-arrow-next">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+        </div>
+
+        <div className="carousel-dots">
+          {features.map((_, index) => (
+            <button
+              key={index}
+              className={`dot ${index === activeFeature ? 'active' : ''}`}
+              onClick={() => setActiveFeature(index)}
+              aria-label={`עבור לתכונה ${index + 1}`}
+            />
+          ))}
+        </div>
+      </section>
+
+      {/* Features Grid for Desktop */}
+      <section className="features-grid-section">
         <div className="features-container">
-          <h2>למה לבחור בקרקע הזו?</h2>
           <div className="features-grid">
-            <div className="feature-card">
-              <div className="feature-icon">🏗️</div>
-              <h3>זכויות בנייה ללא מגבלות</h3>
-              <p>אפשרות לבנות בניין מגורים או משרדים ללא הגבלות תכנוניות מיוחדות</p>
-            </div>
-            <div className="feature-card">
-              <div className="feature-icon">🚇</div>
-              <h3>רכבת קלה ומטרו</h3>
-              <p>גישה ישירה לקו האדום של הרכבת הקלה - 2 דקות לעזריאלי, 2 תחנות לרוטשילד</p>
-            </div>
-            <div className="feature-card">
-              <div className="feature-icon">💎</div>
-              <h3>השקעה יוקרתית</h3>
-              <p>קרקע בתל אביב במיקום מעולה - השקעה בטוחה עם פוטנציאל עליה גבוה</p>
-            </div>
-            <div className="feature-card">
-              <div className="feature-icon">📍</div>
-              <h3>מיקום מרכזי</h3>
-              <p>קרוב לכל השירותים, קניונים, בתי חולים ומוסדות חינוך מובילים</p>
-            </div>
-            <div className="feature-card">
-              <div className="feature-icon">⚡</div>
-              <h3>זמינות מיידית</h3>
-              <p>הקרקע זמינה להעברה מיידית עם כל האישורים והרישיונות</p>
-            </div>
-            <div className="feature-card">
-              <div className="feature-icon">🎯</div>
-              <h3>הזדמנות בלעדית</h3>
-              <p>מוצע בבלעדיות - הזדמנות יחידה לרכוש קרקע באזור מבוקש זה</p>
-            </div>
+            {features.map((feature, index) => (
+              <div key={index} className="feature-card-grid">
+                <div className="feature-icon" style={{ color: '#228B22' }}>
+                  {feature.icon}
+                </div>
+                <h3>{feature.title}</h3>
+                <p>{feature.description}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -119,64 +260,122 @@ export default function Home() {
       {/* Location Section */}
       <section className="location">
         <div className="location-container">
-          <h2>מיקום אסטרטגי בתל אביב</h2>
-          <p style={{ fontSize: '1.2rem', marginBottom: '2rem', color: '#666' }}>
+          <h2 className="section-title">מיקום אסטרטגי בתל אביב</h2>
+          <p className="section-subtitle">
             הקרקע ממוקמת במיקום אסטרטגי בתל אביב, עם גישה מעולה לכל חלקי העיר ואזור המרכז
           </p>
           
           <div className="map-container">
-            <img 
-              src="/images/map_crop_test.jpg" 
-              alt="מפת מיקום הקרקע בתל אביב עם קווי הרכבת הקלה והמטרו"
-              style={{ 
-                width: '100%', 
-                maxWidth: '600px', 
-                borderRadius: '15px',
-                boxShadow: '0 10px 30px rgba(0,0,0,0.2)',
-                margin: '2rem auto',
-                display: 'block'
-              }}
-            />
+            <div className="map-wrapper">
+              <img 
+                src="/images/map_crop_test.jpg" 
+                alt="מפת מיקום הקרקע בתל אביב עם קווי הרכבת הקלה והמטרו"
+                className="map-image"
+              />
+              <div className="map-pin">
+                <div className="pin-icon">
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" fill="#DC2626" stroke="#B91C1C" strokeWidth="2"/>
+                    <circle cx="12" cy="10" r="3" fill="white"/>
+                  </svg>
+                </div>
+                <div className="pin-pulse"></div>
+              </div>
+            </div>
           </div>
           
           <div className="location-highlights">
             <div className="highlight-item">
-              <div className="icon">🏢</div>
+              <div className="icon">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <rect x="4" y="2" width="16" height="20" rx="2" ry="2" />
+                  <path d="M9 22v-4h6v4" />
+                  <path d="M8 6h.01" />
+                  <path d="M16 6h.01" />
+                  <path d="M12 6h.01" />
+                  <path d="M12 10h.01" />
+                  <path d="M8 10h.01" />
+                  <path d="M16 10h.01" />
+                  <path d="M8 14h.01" />
+                  <path d="M16 14h.01" />
+                  <path d="M12 14h.01" />
+                </svg>
+              </div>
               <h4>מרכז עזריאלי</h4>
-              <p>2 דקות ברכבת הקלה</p>
+              <p>5 דקות ברכבת הכבדה</p>
             </div>
             <div className="highlight-item">
-              <div className="icon">🚇</div>
-              <h4>רחוב רוטשילד</h4>
+              <div className="icon">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                  <path d="M2 17l10 5 10-5M2 12l10 5 10-5" />
+                </svg>
+              </div>
+              <h4>שדרות רוטשילד</h4>
               <p>2 תחנות ברכבת הקלה</p>
             </div>
             <div className="highlight-item">
-              <div className="icon">✈️</div>
-              <h4>שדה התעופה בן גוריון</h4>
-              <p>21 דקות ברכבת ישראל</p>
+              <div className="icon">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" />
+                </svg>
+              </div>
+              <h4>שדה תעופה</h4>
+              <p>15 דקות במטרו</p>
             </div>
             <div className="highlight-item">
-              <div className="icon">🚗</div>
+              <div className="icon">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="22" y1="12" x2="18" y2="12" />
+                  <line x1="6" y1="12" x2="2" y2="12" />
+                  <line x1="12" y1="6" x2="12" y2="2" />
+                  <line x1="12" y1="22" x2="12" y2="18" />
+                </svg>
+              </div>
               <h4>כבישים ראשיים</h4>
-              <p>גישה ישירה לכביש 4 ו-5</p>
+              <p>גישה ישירה לנתיבי איילון, כביש 1, כביש 44</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Articles Section */}
+      <section className="articles-section">
+        <div className="articles-container">
+          <div className="section-header">
+            <h2 className="section-title">מה התקשורת אומרת?</h2>
+            <p className="section-subtitle">כתבות ודיווחים על הפרויקט מהתקשורת המובילה</p>
+          </div>
+          
+          <div className="articles-fan">
+            <div className="article-card article-1">
+              <img src="/images/Screenshot 2025-11-12 at 19.22.59.png" alt="כתבה בתקשורת על הפרויקט" />
+            </div>
+            <div className="article-card article-2">
+              <img src="/images/Screenshot 2025-11-12 at 19.24.15.png" alt="כתבה בתקשורת על הפרויקט" />
+            </div>
+            <div className="article-card article-3">
+              <img src="/images/Screenshot 2025-11-12 at 19.25.27.png" alt="כתבה בתקשורת על הפרויקט" />
             </div>
           </div>
         </div>
       </section>
 
       {/* Floating Footer */}
-      <div className="floating-footer">
+      <div className={`floating-footer ${isFormExpanded ? 'expanded' : 'collapsed'}`}>
+        <button className="form-toggle-button" onClick={toggleForm} aria-label="פתח טופס">
+          <span>שלחו פרטים</span>
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M10 5l-7 7h4v3h6v-3h4z"/>
+          </svg>
+        </button>
+        
         <div className="footer-content">
-          <div className="footer-text">
-            <h3>מעוניינים? בואו נדבר!</h3>
-            <p>השאירו פרטים או התקשרו עכשיו לקבלת מידע מפורט</p>
-          </div>
-          
           <div className="footer-actions">
-            <a href="tel:+972501234567" className="call-button">
-              📞 התקשרו עכשיו
-            </a>
-            
+            <button className="form-close-button" onClick={toggleForm} aria-label="סגור טופס">
+              ✕
+            </button>
             <form className="lead-form" onSubmit={handleSubmit}>
               <input
                 type="text"
