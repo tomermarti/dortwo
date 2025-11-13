@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>תצוגה מקדימה - פרסומת פייסבוק</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            background: #f0f2f5;
+            padding: 40px 20px;
+            direction: rtl;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .preview-container {
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .preview-title {
+            text-align: center;
+            color: #1c1e21;
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        /* Facebook Ad Style */
+        .fb-ad {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .fb-ad-header {
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #e4e6eb;
+        }
+
+        .fb-ad-logo {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #00A060 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 24px;
+            margin-left: 12px;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.5);
+            animation: logoPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes logoPulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 4px 15px rgba(255, 215, 0, 0.5);
+            }
+            50% {
+                transform: scale(1.1);
+                box-shadow: 0 6px 20px rgba(255, 215, 0, 0.7);
+            }
+        }
+
+        .fb-ad-header-text {
+            flex: 1;
+        }
+
+        .fb-ad-header-text h3 {
+            font-size: 15px;
+            font-weight: 600;
+            color: #050505;
+            margin-bottom: 2px;
+        }
+
+        .fb-ad-header-text p {
+            font-size: 13px;
+            color: #65676b;
+        }
+
+        .fb-ad-content {
+            padding: 12px 16px;
+        }
+
+        .fb-ad-text {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #050505;
+            margin-bottom: 12px;
+            white-space: pre-line;
+            font-weight: 500;
+        }
+
+        .fb-ad-image {
+            width: 100%;
+            height: 0;
+            padding-bottom: 125%; /* יחס 4:5 (רוחב:גובה) - פורמט מומלץ לפייסבוק */
+            position: relative;
+            overflow: hidden;
+            background: #000000;
+        }
+
+        .fb-ad-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0.7;
+        }
+
+        .fb-ad-image-bg {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        /* עיצוב מיוחד לתמונת קרקע - חלוקה ל-2 אזורים */
+        .fb-ad-image.land-image {
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 0;
+            height: auto;
+            min-height: 600px;
+        }
+
+        .fb-ad-image.land-image .land-text-section {
+            flex: 1;
+            background: linear-gradient(135deg, rgba(0, 95, 57, 0.98) 0%, rgba(0, 160, 96, 0.98) 100%);
+            padding: 3rem 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            min-height: 300px;
+        }
+
+        .fb-ad-image.land-image .land-image-section {
+            flex: 1;
+            position: relative;
+            min-height: 300px;
+            overflow: hidden;
+        }
+
+        .fb-ad-image.land-image .land-image-bg {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .fb-ad-image.land-image .land-image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.4) 100%);
+            z-index: 1;
+        }
+
+        /* פין על המפה */
+        .land-map-pin {
+            position: absolute;
+            top: 35%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+
+        .land-pin-icon {
+            position: relative;
+            z-index: 2;
+            animation: pinBounce 2s ease-in-out infinite;
+        }
+
+        .land-pin-pulse {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            background: rgba(220, 38, 38, 0.3);
+            border-radius: 50%;
+            animation: pinPulse 2s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        @keyframes pinBounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        @keyframes pinPulse {
+            0% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(3);
+                opacity: 0;
+            }
+        }
+
+        /* תוכן הטקסט באזור הטקסט */
+        .fb-ad-image.land-image .land-text-content {
+            position: relative;
+            z-index: 3;
+            text-align: center;
+            color: white;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .fb-ad-image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.6) 100%);
+            z-index: 2;
+        }
+
+        /* Overlay כהה יותר לתמונת קרקע */
+        .fb-ad-image.land-image .fb-ad-image-overlay {
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.75) 100%);
+        }
+
+        .fb-ad-image-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 3;
+            text-align: center;
+            color: white;
+            width: 90%;
+            max-width: 600px;
+        }
+
+        /* רקע כהה מאחורי הטקסט לתמונת קרקע */
+        .fb-ad-image.land-image .fb-ad-image-content::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: -30px;
+            right: -30px;
+            bottom: -20px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 20px;
+            z-index: -1;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .fb-ad-hero-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #B8860B 0%, #ffffff 50%, #005F39 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        /* טקסט לבן בולט באזור הטקסט של תמונת קרקע */
+        .land-text-section .fb-ad-hero-title {
+            color: #ffffff !important;
+            -webkit-text-fill-color: #ffffff !important;
+            background: none !important;
+            text-shadow: 0 3px 15px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 255, 255, 0.3);
+            filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.6));
+        }
+
+        .fb-ad-hero-description {
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 1.2rem;
+            font-weight: 400;
+            margin: 1rem 0;
+            line-height: 1.4;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+        }
+
+        /* הגדלת הטקסט במודעה של הבניין */
+        .fb-ad-image:not(.land-image) .fb-ad-hero-description {
+            font-size: 1.5rem;
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        /* טקסט לבן בולט באזור הטקסט של תמונת קרקע */
+        .land-text-section .fb-ad-hero-description {
+            color: #ffffff !important;
+            text-shadow: 0 3px 15px rgba(0, 0, 0, 0.9), 0 0 20px rgba(255, 255, 255, 0.4);
+            font-weight: 500;
+        }
+
+        .fb-ad-price-tag {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 1.5rem;
+            padding: 1rem 2rem;
+            background: rgba(0, 95, 57, 0.95);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-radius: 16px;
+            border: 2px solid #B8860B;
+            box-shadow: 0 4px 16px rgba(184, 134, 11, 0.4);
+        }
+
+        .fb-ad-price-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 0.3rem;
+        }
+
+        .fb-ad-price-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        /* תג מחיר בולט באזור הטקסט של תמונת קרקע */
+        .land-text-section .fb-ad-price-tag {
+            border: 3px solid #FFD700;
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .land-text-section .fb-ad-price-label {
+            color: #FFD700;
+            font-weight: 600;
+        }
+
+        .land-text-section .fb-ad-price-value {
+            text-shadow: 0 3px 12px rgba(0, 0, 0, 0.6);
+        }
+
+        @media (max-width: 600px) {
+            .fb-ad-hero-title {
+                font-size: 2.5rem;
+            }
+            .fb-ad-hero-description {
+                font-size: 1.2rem;
+            }
+            .fb-ad-price-value {
+                font-size: 2.5rem;
+            }
+            .fb-ad-price-tag {
+                padding: 1.2rem 2rem;
+            }
+            .fb-ad-cta {
+                font-size: 16px;
+                padding: 14px 20px;
+            }
+            .fb-ad-image {
+                padding-bottom: 125%; /* שמירה על יחס 4:5 גם במובייל */
+            }
+        }
+
+        .fb-ad-footer {
+            padding: 12px 16px;
+            border-top: 1px solid #e4e6eb;
+        }
+
+        .fb-ad-cta {
+            background: #1877f2;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+        }
+
+        .fb-ad-cta:hover {
+            background: #166fe5;
+        }
+
+        .fb-ad-headline {
+            font-size: 17px;
+            font-weight: 600;
+            color: #1877f2;
+            margin-top: 8px;
+            margin-bottom: 4px;
+        }
+
+        .variations {
+            margin-top: 40px;
+        }
+
+        .variation-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1c1e21;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e4e6eb;
+        }
+
+        .variation-box {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .variation-box h4 {
+            color: #1877f2;
+            font-size: 15px;
+            margin-bottom: 10px;
+        }
+
+        .variation-box p {
+            color: #050505;
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre-line;
+        }
+
+        .copy-btn {
+            background: #42b883;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: #369870;
+        }
+
+        .emoji {
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="preview-container">
+        <h1 class="preview-title">תצוגה מקדימה - פרסומת פייסבוק</h1>
+        <p style="text-align: center; color: #65676b; margin-bottom: 30px; font-size: 14px;">
+            שתי גרסאות: תמונת מגדל | תמונת קרקע
+        </p>
+
+        <!-- גרסה 1: תמונת מגדל -->
+        <h2 style="text-align: center; color: #1c1e21; margin: 40px 0 20px 0; font-size: 18px; font-weight: 600;">
+            גרסה 1: תמונת מגדל
+        </h2>
+        <div class="fb-ad">
+            <div class="fb-ad-header">
+                <div class="fb-ad-logo">🏗️</div>
+                <div class="fb-ad-header-text">
+                    <h3>קרקע בתל אביב</h3>
+                    <p>ספונסור</p>
+                </div>
+            </div>
+            <div class="fb-ad-content">
+                <div class="fb-ad-headline">השקעה נדירה בתל אביב - החל מ-799,000₪</div>
+                <div class="fb-ad-text">🏗️ הזדמנות נדירה להשקעה בקרקע בתל אביב!
+
+📍 מיקום אסטרטגי במפגש התחבורתי הלוהט בישראל:
+• מטרו
+• רכבת קלה
+• רכבת ישראל
+• מסוף אוטובוסים
+
+✨ מגדל ללא מגבלת קומות למגורים, מסחר ותעסוקה
+💎 פוטנציאל עליית ערך גבוה
+🎯 מיקום מרכזי באזור מתפתח
+
+החל מ-799,000 ₪
+
+לפרטים נוספים - לחצו על הקישור!</div>
+            </div>
+            <div class="fb-ad-image">
+                <img src="IMG_6229.JPG" alt="מגדל בתל אביב" class="fb-ad-image-bg" onerror="this.src='/IMG_6229.JPG';">
+                <div class="fb-ad-image-overlay"></div>
+                <div class="fb-ad-image-content">
+                    <h2 class="fb-ad-hero-title">עתיד תל אביב מתחיל כאן.</h2>
+                    <p class="fb-ad-hero-description">השקעה נדירה בקרקע למגורים ללא מגבלת קומות, במפגש התחבורתי הלוהט בישראל – מטרו, רכבת קלה ורכבת ישראל.</p>
+                    <div class="fb-ad-price-tag">
+                        <span class="fb-ad-price-label">החל מ־</span>
+                        <span class="fb-ad-price-value">799,000 ₪</span>
+                    </div>
+                </div>
+            </div>
+            <div class="fb-ad-footer">
+                <button class="fb-ad-cta">למד עוד</button>
+            </div>
+        </div>
+
+        <!-- גרסה 2: תמונת קרקע -->
+        <h2 style="text-align: center; color: #1c1e21; margin: 40px 0 20px 0; font-size: 18px; font-weight: 600;">
+            גרסה 2: תמונת קרקע
+        </h2>
+        <div class="fb-ad">
+            <div class="fb-ad-header">
+                <div class="fb-ad-logo">🏗️</div>
+                <div class="fb-ad-header-text">
+                    <h3>קרקע בתל אביב</h3>
+                    <p>ספונסור</p>
+                </div>
+            </div>
+            <div class="fb-ad-content">
+                <div class="fb-ad-headline">השקעה נדירה בתל אביב - החל מ-799,000₪</div>
+                <div class="fb-ad-text">🏗️ הזדמנות נדירה להשקעה בקרקע בתל אביב!
+
+📍 מיקום אסטרטגי במפגש התחבורתי הלוהט בישראל:
+• מטרו
+• רכבת קלה
+• רכבת ישראל
+• מסוף אוטובוסים
+
+✨ מגדל ללא מגבלת קומות למגורים, מסחר ותעסוקה
+💎 פוטנציאל עליית ערך גבוה
+🎯 מיקום מרכזי באזור מתפתח
+
+החל מ-799,000 ₪
+
+לפרטים נוספים - לחצו על הקישור!</div>
+            </div>
+            <div class="fb-ad-image land-image">
+                <!-- אזור הטקסט -->
+                <div class="land-text-section">
+                    <div class="land-text-content">
+                        <h2 class="fb-ad-hero-title" style="color: #ffffff; -webkit-text-fill-color: #ffffff; background: none; text-shadow: 0 4px 20px rgba(255, 215, 0, 0.6);">עתיד תל אביב מתחיל כאן.</h2>
+                        <p class="fb-ad-hero-description" style="color: rgba(255, 255, 255, 0.95); text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);">השקעה נדירה בקרקע למגורים ללא מגבלת קומות, במפגש התחבורתי הלוהט בישראל – מטרו, רכבת קלה ורכבת ישראל.</p>
+                        <div class="fb-ad-price-tag" style="margin-top: 1.5rem;">
+                            <span class="fb-ad-price-label">החל מ־</span>
+                            <span class="fb-ad-price-value">799,000 ₪</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- אזור התמונה עם הפין -->
+                <div class="land-image-section">
+                    <img src="IMG_6249.jpg" alt="קרקע בתל אביב" class="land-image-bg" onerror="this.src='/IMG_6249.jpg';">
+                    <div class="land-image-overlay"></div>
+                    <div class="land-map-pin">
+                        <div class="land-pin-pulse"></div>
+                        <div class="land-pin-icon">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" fill="#DC2626" stroke="#B91C1C" stroke-width="2"/>
+                                <circle cx="12" cy="10" r="3" fill="white"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="fb-ad-footer">
+                <button class="fb-ad-cta">למד עוד</button>
+            </div>
+        </div>
+
+        <!-- Variations -->
+        <div class="variations">
+            <h2 class="variation-title">גרסאות נוספות</h2>
+
+            <div class="variation-box">
+                <h4>כותרת חלופית 1:</h4>
+                <p id="headline1">קרקע למגורים ללא מגבלת קומות בת"א</p>
+                <button class="copy-btn" onclick="copyToClipboard('headline1')">העתק</button>
+            </div>
+
+            <div class="variation-box">
+                <h4>כותרת חלופית 2:</h4>
+                <p id="headline2">עתיד תל אביב מתחיל כאן - השקעה ייחודית</p>
+                <button class="copy-btn" onclick="copyToClipboard('headline2')">העתק</button>
+            </div>
+
+            <div class="variation-box">
+                <h4>טקסט קצר (גרסה 2):</h4>
+                <p id="text2">השקעה נדירה בקרקע בתל אביב! 🏙️
+
+מיקום אסטרטגי במפגש התחבורתי הלוהט:
+מטרו • רכבת קלה • רכבת ישראל
+
+מגדל ללא מגבלת קומות למגורים, מסחר ותעסוקה
+פוטנציאל עליית ערך גבוה
+
+החל מ-799,000 ₪
+
+לפרטים נוספים - לחצו כאן 👇</p>
+                <button class="copy-btn" onclick="copyToClipboard('text2')">העתק</button>
+            </div>
+
+            <div class="variation-box">
+                <h4>טקסט ממוקד (גרסה 3):</h4>
+                <p id="text3">💎 הזדמנות ייחודית להשקעה בתל אביב
+
+קרקע למגורים ללא מגבלת קומות
+במיקום אסטרטגי במפגש התחבורתי הלוהט בישראל
+
+📍 מטרו • רכבת קלה • רכבת ישראל • מסוף אוטובוסים
+🏗️ פוטנציאל עליית ערך גבוה
+💰 החל מ-799,000 ₪
+
+לפרטים נוספים - לחצו על הקישור!</p>
+                <button class="copy-btn" onclick="copyToClipboard('text3')">העתק</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            const text = element.textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = 'הועתק!';
+                btn.style.background = '#42b883';
+                
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = '#42b883';
+                }, 2000);
+            }).catch(err => {
+                alert('שגיאה בהעתקה');
+            });
+        }
+    </script>
+</body>
+</html>
+

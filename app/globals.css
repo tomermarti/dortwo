@@ -89,7 +89,7 @@ a {
   color: #ffffff;
   letter-spacing: -0.04em;
   line-height: 1.05;
-  background: linear-gradient(135deg, #B8860B 0%, #ffffff 50%, #228B22 100%);
+  background: linear-gradient(135deg, #B8860B 0%, #ffffff 50%, #005F39 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -111,7 +111,7 @@ a {
   align-items: center;
   margin: 3rem 0;
   padding: 2rem 3rem;
-  background: rgba(34, 139, 34, 0.95);
+  background: rgba(0, 95, 57, 0.95);
   backdrop-filter: blur(30px);
   -webkit-backdrop-filter: blur(30px);
   border-radius: 24px;
@@ -532,7 +532,7 @@ a {
 
 .articles-fan {
   position: relative;
-  height: 400px;
+  height: 650px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -542,8 +542,8 @@ a {
 
 .article-card {
   position: absolute;
-  width: 280px;
-  height: 350px;
+  width: 400px;
+  height: 500px;
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
@@ -572,9 +572,9 @@ a {
   transform: scale(1.1);
 }
 
-/* Fan arrangement */
+/* Fan arrangement - default positions */
 .article-1 {
-  transform: rotate(-15deg) translateX(-120px);
+  transform: rotate(-15deg) translateX(-180px);
   z-index: 1;
 }
 
@@ -584,20 +584,52 @@ a {
 }
 
 .article-3 {
-  transform: rotate(15deg) translateX(120px);
+  transform: rotate(15deg) translateX(180px);
   z-index: 2;
 }
 
-.article-1:hover {
-  transform: rotate(-10deg) translateX(-120px) scale(1.05) translateY(-10px);
+/* Position classes for dynamic swapping */
+.article-card.position-1 {
+  transform: rotate(-15deg) translateX(-180px) !important;
+  z-index: 1;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.article-2:hover {
+.article-card.position-2 {
+  transform: rotate(0deg) translateX(0px) !important;
+  z-index: 3;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.article-card.position-3 {
+  transform: rotate(15deg) translateX(180px) !important;
+  z-index: 2;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Active article comes to front and centered */
+.article-card.active-front {
+  z-index: 100 !important;
+  transform: rotate(0deg) translateX(0px) !important;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 450px !important;
+  height: 600px !important;
+}
+
+.article-1:hover:not(.active-front) {
+  transform: rotate(-10deg) translateX(-180px) scale(1.05) translateY(-10px);
+}
+
+.article-2:hover:not(.active-front) {
   transform: rotate(0deg) translateX(0px) scale(1.05) translateY(-10px);
 }
 
-.article-3:hover {
-  transform: rotate(10deg) translateX(120px) scale(1.05) translateY(-10px);
+.article-3:hover:not(.active-front) {
+  transform: rotate(10deg) translateX(180px) scale(1.05) translateY(-10px);
+}
+
+.article-card.active-front:hover {
+  transform: rotate(0deg) translateX(0px) scale(1.02) translateY(-10px) !important;
 }
 
 /* Location Section */
@@ -775,7 +807,7 @@ a {
 
 .form-toggle-button {
   width: 100%;
-  background: linear-gradient(135deg, rgba(34, 139, 34, 0.8), rgba(50, 205, 50, 0.8), rgba(184, 134, 11, 0.8));
+  background: linear-gradient(135deg, rgba(0, 95, 57, 0.8), rgba(0, 160, 96, 0.8), rgba(184, 134, 11, 0.8));
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
   color: white;
@@ -793,16 +825,16 @@ a {
   justify-content: center;
   gap: 0.5rem;
   box-shadow: 
-    0 4px 20px rgba(34, 139, 34, 0.3),
+    0 4px 20px rgba(0, 95, 57, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .form-toggle-button:hover {
   transform: scale(1.02);
-  background: linear-gradient(135deg, rgba(50, 205, 50, 0.9), rgba(34, 139, 34, 0.9), rgba(218, 165, 32, 0.9));
+  background: linear-gradient(135deg, rgba(0, 160, 96, 0.9), rgba(0, 95, 57, 0.9), rgba(218, 165, 32, 0.9));
   box-shadow: 
-    0 6px 28px rgba(34, 139, 34, 0.4),
+    0 6px 28px rgba(0, 95, 57, 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.3);
   border-color: rgba(255, 255, 255, 0.3);
 }
@@ -876,7 +908,7 @@ a {
 }
 
 .lead-form button {
-  background: linear-gradient(135deg, rgba(34, 139, 34, 0.9), rgba(50, 205, 50, 0.9), rgba(184, 134, 11, 0.9));
+  background: linear-gradient(135deg, rgba(0, 95, 57, 0.9), rgba(0, 160, 96, 0.9), rgba(184, 134, 11, 0.9));
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   color: white;
@@ -892,15 +924,15 @@ a {
   white-space: nowrap;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   box-shadow: 
-    0 4px 16px rgba(34, 139, 34, 0.3),
+    0 4px 16px rgba(0, 95, 57, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .lead-form button:hover {
   transform: scale(1.02);
-  background: linear-gradient(135deg, rgba(50, 205, 50, 0.9), rgba(34, 139, 34, 0.9), rgba(218, 165, 32, 0.9));
+  background: linear-gradient(135deg, rgba(0, 160, 96, 0.9), rgba(0, 95, 57, 0.9), rgba(218, 165, 32, 0.9));
   box-shadow: 
-    0 6px 24px rgba(34, 139, 34, 0.4),
+    0 6px 24px rgba(0, 95, 57, 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.3);
   border-color: rgba(255, 255, 255, 0.3);
 }
@@ -1107,17 +1139,17 @@ a {
   }
 
   .articles-fan {
-    height: 300px;
+    height: 500px;
     margin-top: 2rem;
   }
 
   .article-card {
-    width: 200px;
-    height: 250px;
+    width: 280px;
+    height: 350px;
   }
 
   .article-1 {
-    transform: rotate(-20deg) translateX(-80px);
+    transform: rotate(-20deg) translateX(-100px);
   }
 
   .article-2 {
@@ -1125,19 +1157,50 @@ a {
   }
 
   .article-3 {
-    transform: rotate(20deg) translateX(80px);
+    transform: rotate(20deg) translateX(100px);
   }
 
-  .article-1:hover {
-    transform: rotate(-15deg) translateX(-80px) scale(1.05) translateY(-10px);
+  /* Position classes for mobile dynamic swapping */
+  .article-card.position-1 {
+    transform: rotate(-20deg) translateX(-100px) !important;
+    z-index: 1;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  .article-2:hover {
+  .article-card.position-2 {
+    transform: rotate(0deg) translateX(0px) !important;
+    z-index: 3;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .article-card.position-3 {
+    transform: rotate(20deg) translateX(100px) !important;
+    z-index: 2;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .article-card.active-front {
+    z-index: 100 !important;
+    transform: rotate(0deg) translateX(0px) !important;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 320px !important;
+    height: 450px !important;
+  }
+
+  .article-1:hover:not(.active-front) {
+    transform: rotate(-15deg) translateX(-100px) scale(1.05) translateY(-10px);
+  }
+
+  .article-2:hover:not(.active-front) {
     transform: rotate(0deg) translateX(0px) scale(1.05) translateY(-10px);
   }
 
-  .article-3:hover {
-    transform: rotate(15deg) translateX(80px) scale(1.05) translateY(-10px);
+  .article-3:hover:not(.active-front) {
+    transform: rotate(15deg) translateX(100px) scale(1.05) translateY(-10px);
+  }
+
+  .article-card.active-front:hover {
+    transform: rotate(0deg) translateX(0px) scale(1.02) translateY(-10px) !important;
   }
 }
 

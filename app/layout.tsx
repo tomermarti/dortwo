@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import FacebookPixel from './components/FacebookPixel'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://tel-aviv-land-sale.vercel.app'),
@@ -25,7 +26,10 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
       </head>
-      <body suppressHydrationWarning>{children}</body>
+      <body suppressHydrationWarning>
+        <FacebookPixel />
+        {children}
+      </body>
     </html>
   )
 }

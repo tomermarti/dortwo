@@ -1,0 +1,102 @@
+{
+  "campaign_name": "קרקע בתל אביב - השקעה נדירה",
+  "ad_set_name": "תל אביב והמרכז - נדל"ן",
+  "ad_variations": [
+    {
+      "id": 1,
+      "name": "גרסה ראשית - המלצה",
+      "headline": "השקעה נדירה בתל אביב - החל מ-799,000₪",
+      "primary_text": "🏗️ הזדמנות נדירה להשקעה בקרקע בתל אביב!\n\n📍 מיקום אסטרטגי במפגש התחבורתי הלוהט בישראל:\n• מטרו\n• רכבת קלה\n• רכבת ישראל\n• מסוף אוטובוסים\n\n✨ מגדל ללא מגבלת קומות למגורים, מסחר ותעסוקה\n💎 פוטנציאל עליית ערך גבוה\n🎯 מיקום מרכזי באזור מתפתח\n\nהחל מ-799,000 ₪\n\nלפרטים נוספים - לחצו על הקישור!",
+      "description": "השקעה נדירה בתל אביב",
+      "call_to_action": "למד עוד",
+      "image_path": "/images/property-video.mp4",
+      "link": "YOUR_LANDING_PAGE_URL",
+      "recommended": true
+    },
+    {
+      "id": 2,
+      "name": "גרסה קצרה",
+      "headline": "קרקע למגורים ללא מגבלת קומות בת\"א",
+      "primary_text": "השקעה נדירה בקרקע בתל אביב! 🏙️\n\nמיקום אסטרטגי במפגש התחבורתי הלוהט:\nמטרו • רכבת קלה • רכבת ישראל\n\nמגדל ללא מגבלת קומות למגורים, מסחר ותעסוקה\nפוטנציאל עליית ערך גבוה\n\nהחל מ-799,000 ₪\n\nלפרטים נוספים - לחצו כאן 👇",
+      "description": "קרקע למגורים ללא מגבלת קומות",
+      "call_to_action": "צור קשר",
+      "image_path": "/images/property-video.mp4",
+      "link": "YOUR_LANDING_PAGE_URL",
+      "recommended": false
+    },
+    {
+      "id": 3,
+      "name": "גרסה ממוקדת",
+      "headline": "עתיד תל אביב מתחיל כאן - השקעה ייחודית",
+      "primary_text": "💎 הזדמנות ייחודית להשקעה בתל אביב\n\nקרקע למגורים ללא מגבלת קומות\nבמיקום אסטרטגי במפגש התחבורתי הלוהט בישראל\n\n📍 מטרו • רכבת קלה • רכבת ישראל • מסוף אוטובוסים\n🏗️ פוטנציאל עליית ערך גבוה\n💰 החל מ-799,000 ₪\n\nלפרטים נוספים - לחצו על הקישור!",
+      "description": "השקעה נדירה בתל אביב",
+      "call_to_action": "בקש מידע",
+      "image_path": "/images/property-video.mp4",
+      "link": "YOUR_LANDING_PAGE_URL",
+      "recommended": false
+    }
+  ],
+  "targeting": {
+    "age_min": 30,
+    "age_max": 65,
+    "genders": [1, 2],
+    "locations": [
+      {
+        "name": "Tel Aviv-Yafo, Israel",
+        "key": "2494738"
+      },
+      {
+        "name": "Gush Dan, Israel",
+        "key": "2494739"
+      }
+    ],
+    "interests": [
+      "Real estate",
+      "Investment",
+      "Tel Aviv",
+      "Property investment",
+      "Real estate investment"
+    ],
+    "behaviors": [
+      "People who visited real estate websites",
+      "People who searched for real estate"
+    ]
+  },
+  "budget": {
+    "daily_budget": 100,
+    "currency": "ILS",
+    "recommended_range": "50-100 ILS per day"
+  },
+  "schedule": {
+    "start_date": "2024-01-01",
+    "end_date": null,
+    "recommended_duration": "7-14 days for initial testing"
+  },
+  "optimization": {
+    "objective": "CONVERSIONS",
+    "optimization_goal": "LEAD_GENERATION",
+    "bid_strategy": "LOWEST_COST"
+  },
+  "auto_reply_message": "שלום! תודה על העניין בפרויקט.\n\nזהו פרויקט ייחודי של קרקע למגורים בתל אביב ללא מגבלת קומות, במיקום אסטרטגי במפגש התחבורתי הלוהט בישראל.\n\nלפרטים נוספים, אנא השאירו פרטים בטופס באתר או שלחו הודעה ישירה.\n\nניתן גם ליצור קשר בוואטסאפ: 03-385-0585",
+  "notes": {
+    "image_recommendations": [
+      "Use property image from website",
+      "Use video from /images/property-video.mp4",
+      "Use location map image",
+      "Ensure text overlay is less than 20% of image"
+    ],
+    "best_practices": [
+      "Test multiple variations (A/B testing)",
+      "Monitor performance daily for first week",
+      "Adjust targeting based on results",
+      "Use Facebook Pixel for conversion tracking",
+      "Mobile-first approach (most views are on mobile)"
+    ],
+    "colors": {
+      "primary": "#005F39",
+      "secondary": "#B8860B",
+      "accent": "#00A060"
+    }
+  }
+}
+

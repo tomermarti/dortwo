@@ -2,6 +2,13 @@
 
 import { useState, useEffect } from 'react'
 
+// Facebook Pixel type declaration
+declare global {
+  interface Window {
+    fbq: (action: string, event: string, params?: Record<string, any>) => void
+  }
+}
+
 export default function Home() {
   const [leadData, setLeadData] = useState({
     name: '',
@@ -12,6 +19,7 @@ export default function Home() {
   const [isFormExpanded, setIsFormExpanded] = useState(false)
   const [activeFeature, setActiveFeature] = useState(0)
   const [scrollY, setScrollY] = useState(0)
+  const [centeredArticle, setCenteredArticle] = useState<number>(2) // Article 2 starts centered
 
   const features = [
     {
@@ -23,7 +31,7 @@ export default function Home() {
       ),
       title: 'מגדל ללא מגבלת קומות',
       description: 'הקרקע מיועדת למגורים מסחר ותעסוקה',
-      gradient: 'linear-gradient(135deg, #228B22 0%, #32CD32 50%, #B8860B 100%)'
+      gradient: 'linear-gradient(135deg, #005F39 0%, #00A060 50%, #B8860B 100%)'
     },
     {
       icon: (
@@ -36,7 +44,7 @@ export default function Home() {
       ),
       title: 'מפגש תחבורה משולב',
       description: 'מפגש של ארבעה מוקדי תחבורה: רכבת קלה, מטרו, רכבת ישראל, מסוף אוטובוסים',
-      gradient: 'linear-gradient(135deg, #B8860B 0%, #DAA520 50%, #228B22 100%)'
+      gradient: 'linear-gradient(135deg, #B8860B 0%, #DAA520 50%, #005F39 100%)'
     },
     {
       icon: (
@@ -48,7 +56,7 @@ export default function Home() {
       ),
       title: 'הזדמנות ייחודית',
       description: 'קרקע בתל אביב במקום מנצח, בעלת פוטנציאל עליית ערך גבוה',
-      gradient: 'linear-gradient(135deg, #228B22 0%, #32CD32 50%, #B8860B 100%)'
+      gradient: 'linear-gradient(135deg, #005F39 0%, #00A060 50%, #B8860B 100%)'
     },
     {
       icon: (
@@ -59,7 +67,7 @@ export default function Home() {
       ),
       title: 'מקום מרכזי',
       description: 'ציר מרכזי במקום מתפתח, באיזור בעל פוטנציאל תנופה אדיר!',
-      gradient: 'linear-gradient(135deg, #B8860B 0%, #32CD32 50%, #228B22 100%)'
+      gradient: 'linear-gradient(135deg, #B8860B 0%, #00A060 50%, #005F39 100%)'
     }
   ]
 
@@ -86,6 +94,11 @@ export default function Home() {
       if (response.ok) {
         setSubmitMessage('תודה! פרטיכם נשלחו בהצלחה. ניצור איתכם קשר בקרוב.')
         setLeadData({ name: '', phone: '' })
+        
+        // Track Facebook Pixel CompleteRegistration event
+        if (typeof window !== 'undefined' && window.fbq) {
+          window.fbq('track', 'CompleteRegistration')
+        }
       } else {
         setSubmitMessage('אירעה שגיאה. אנא נסו שוב או התקשרו אלינו ישירות.')
       }
@@ -246,7 +259,7 @@ export default function Home() {
           <div className="features-grid">
             {features.map((feature, index) => (
               <div key={index} className="feature-card-grid">
-                <div className="feature-icon" style={{ color: '#228B22' }}>
+                <div className="feature-icon" style={{ color: '#005F39' }}>
                   {feature.icon}
                 </div>
                 <h3>{feature.title}</h3>
@@ -349,14 +362,43 @@ export default function Home() {
           </div>
           
           <div className="articles-fan">
-            <div className="article-card article-1">
-              <img src="/images/Screenshot 2025-11-12 at 19.22.59.png" alt="כתבה בתקשורת על הפרויקט" />
+            <div 
+              className={`article-card article-1 ${
+                centeredArticle === 1 ? 'active-front' : 'position-1'
+              }`}
+              onClick={() => {
+                if (centeredArticle !== 1) {
+                  setCenteredArticle(1)
+                }
+              }}
+            >
+              <img src="/images/calcalist.png" alt="כתבה בקשתליסט על הפרויקט" />
             </div>
-            <div className="article-card article-2">
-              <img src="/images/Screenshot 2025-11-12 at 19.24.15.png" alt="כתבה בתקשורת על הפרויקט" />
+            <div 
+              className={`article-card article-2 ${
+                centeredArticle === 2 ? 'active-front' : 
+                centeredArticle === 1 ? 'position-1' : 
+                'position-3'
+              }`}
+              onClick={() => {
+                if (centeredArticle !== 2) {
+                  setCenteredArticle(2)
+                }
+              }}
+            >
+              <img src="/images/mako.png" alt="כתבה במאקו על הפרויקט" />
             </div>
-            <div className="article-card article-3">
-              <img src="/images/Screenshot 2025-11-12 at 19.25.27.png" alt="כתבה בתקשורת על הפרויקט" />
+            <div 
+              className={`article-card article-3 ${
+                centeredArticle === 3 ? 'active-front' : 'position-3'
+              }`}
+              onClick={() => {
+                if (centeredArticle !== 3) {
+                  setCenteredArticle(3)
+                }
+              }}
+            >
+              <img src="/images/ynet.png" alt="כתבה בynet על הפרויקט" />
             </div>
           </div>
         </div>
