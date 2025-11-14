@@ -42,7 +42,7 @@ pids
 # Coverage directory used by tools like istanbul
 coverage/
 
-# Large media files (keeping project-specific ones)
+# Large media files - exclude everywhere except public/images/
 *.mp4
 *.MP4
 *.mov
@@ -51,14 +51,24 @@ coverage/
 *.AVI
 *.pdf
 *.PDF
+!public/images/**/*.mp4
+!public/images/**/*.MP4
+!public/images/**/*.mov
+!public/images/**/*.MOV
 
-# Large images (keeping smaller ones)
+# Large images - exclude everywhere except public/images/
 *.png
 *.PNG
 *.jpg
 *.JPG
 *.jpeg
 *.JPEG
+!public/images/**/*.png
+!public/images/**/*.PNG
+!public/images/**/*.jpg
+!public/images/**/*.JPG
+!public/images/**/*.jpeg
+!public/images/**/*.JPEG
 
 # Temporary files
 temp_*
