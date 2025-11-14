@@ -24,15 +24,15 @@ export default function FacebookPixel() {
 
     // Wait for fbq to be available
     const initPixel = () => {
-      if (window.fbq && !pixelInitialized && !window._fbPixelInitialized) {
+      if (typeof window.fbq === 'function' && !pixelInitialized && !window._fbPixelInitialized) {
         pixelInitialized = true
         window._fbPixelInitialized = true
         window.fbq('init', pixelId)
         window.fbq('track', 'PageView')
-      } else if (window.fbq && (pixelInitialized || window._fbPixelInitialized)) {
+      } else if (typeof window.fbq === 'function' && (pixelInitialized || window._fbPixelInitialized)) {
         // Already initialized, do nothing
         return
-      } else if (!window.fbq) {
+      } else if (typeof window.fbq !== 'function') {
         // fbq not ready yet, retry
         setTimeout(initPixel, 50)
       }

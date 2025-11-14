@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 // Facebook Pixel type declaration
 declare global {
@@ -20,6 +20,7 @@ export default function Home() {
   const [activeFeature, setActiveFeature] = useState(0)
   const [scrollY, setScrollY] = useState(0)
   const [centeredArticle, setCenteredArticle] = useState<number>(2) // Article 2 starts centered
+  const videoRef = useRef<HTMLVideoElement>(null)
 
   const features = [
     {
@@ -151,33 +152,61 @@ export default function Home() {
     return () => clearInterval(interval)
   }, [features.length])
 
+  // Auto-play video once (using second half of original video)
+  useEffect(() => {
+    const video = videoRef.current
+    if (video) {
+      // Simple autoplay when video can play
+      const handleCanPlay = () => {
+        video.play().catch(() => {
+          // Ignore autoplay errors (browser may block autoplay)
+        })
+      }
+      
+      video.addEventListener('canplay', handleCanPlay)
+      
+      // If video can already play, start it
+      if (video.readyState >= 3) {
+        video.play().catch(() => {})
+      }
+      
+      return () => {
+        video.removeEventListener('canplay', handleCanPlay)
+      }
+    }
+  }, [])
+
   return (
     <main className="main-wrapper">
       {/* Hero Section with Video Background */}
       <section className="hero">
         <div className="hero-video-background">
           <video
+            ref={videoRef}
             autoPlay
             muted
             playsInline
+            preload="metadata"
             className="hero-video"
             style={{ opacity: 0.7 + (scrollY * 0.0003) }}
           >
-            <source src="/images/property-video.mp4" type="video/mp4" />
+            <source src="/images/property-video-cropped.mp4" type="video/mp4" />
           </video>
           <div className="hero-overlay"></div>
         </div>
-        <div className="hero-content" style={{ transform: `translateY(${scrollY * 0.5}px)` }}>
+        <div className="hero-content" style={{ transform: `translateY(${scrollY * 0.2}px)` }}>
           <h1 className="main-title animate-fade-in">
-            עתיד תל אביב מתחיל כאן.
+            עתיד <strong className="highlight-text">תל אביב</strong> מתחיל כאן.
           </h1>
-          <p className="main-description animate-fade-in-delay">
-            השקעה נדירה בקרקע למגורים ללא מגבלת קומות, במפגש התחבורתי הלוהט בישראל – מטרו, רכבת קלה ורכבת ישראל.
-          </p>
-          <div className="price-tag animate-fade-in-delay-2">
+          <div className="price-tag animate-fade-in-delay">
             <span className="price-label">החל מ־</span>
             <span className="price-value">799,000 ₪</span>
           </div>
+          <p className="main-description animate-fade-in-delay-2">
+            השקעה נדירה בקרקע למגורים <strong className="highlight-text">ללא מגבלת קומות</strong><br />
+            במפגש התחבורתי הלוהט בישראל<br className="mobile-break" />
+            <strong className="highlight-text">מטרו</strong> <strong className="highlight-text">רכבת קלה</strong> <strong className="highlight-text">ורכבת ישראל</strong>.
+          </p>
         </div>
         <div className="scroll-indicator">
           <div className="mouse"></div>
@@ -415,9 +444,12 @@ export default function Home() {
         
         <div className="footer-content">
           <div className="footer-actions">
-            <button className="form-close-button" onClick={toggleForm} aria-label="סגור טופס">
-              ✕
-            </button>
+            <div className="form-header">
+              <span className="form-cta-text">הירשמו לקבלת פרטים נוספים</span>
+              <button className="form-close-button" onClick={toggleForm} aria-label="סגור טופס">
+                ✕
+              </button>
+            </div>
             <form className="lead-form" onSubmit={handleSubmit}>
               <input
                 type="text"
