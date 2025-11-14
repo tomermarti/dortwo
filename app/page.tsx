@@ -203,9 +203,9 @@ export default function Home() {
             <span className="price-value">799,000 ₪</span>
           </div>
           <p className="main-description animate-fade-in-delay-2">
-            השקעה נדירה בקרקע למגורים <strong className="highlight-text">ללא מגבלת קומות</strong><br />
-            במפגש התחבורתי הלוהט בישראל<br className="mobile-break" />
-            <strong className="highlight-text">מטרו</strong> <strong className="highlight-text">רכבת קלה</strong> <strong className="highlight-text">ורכבת ישראל</strong>.
+            השקעה נדירה בקרקע למגורים<br className="mobile-break" /> <strong className="highlight-text">ללא מגבלת קומות</strong><br />
+            <span className="text-spacer"></span>
+            במפגש התחבורתי הלוהט<br className="mobile-break" /> בישראל <strong className="highlight-text">מטרו רכבת קלה ורכבת&nbsp;ישראל</strong>.
           </p>
         </div>
         <div className="scroll-indicator">
