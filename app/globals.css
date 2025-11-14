@@ -1051,9 +1051,16 @@ a {
   }
 
   .hero {
-    padding: 1rem;
+    padding: 3rem 1rem 1rem;
     height: 100vh;
     min-height: 100vh;
+  }
+
+  .hero-content {
+    padding-top: 2rem;
+    justify-content: flex-start;
+    align-items: flex-start;
+    text-align: center;
   }
 
   .main-title {
