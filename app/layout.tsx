@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import FacebookPixel from './components/FacebookPixel'
+import MixpanelProvider from './components/MixpanelProvider'
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://telaviv.dor-2.com'),
@@ -72,6 +73,7 @@ export default function RootLayout({
       </head>
       <body suppressHydrationWarning>
         <FacebookPixel />
+        <MixpanelProvider />
         {children}
       </body>
     </html>

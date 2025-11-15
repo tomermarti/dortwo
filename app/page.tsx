@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import { trackEvent } from './components/MixpanelProvider'
 
 // Facebook Pixel type declaration
 declare global {
@@ -17,60 +18,56 @@ export default function Home() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitMessage, setSubmitMessage] = useState('')
   const [isFormExpanded, setIsFormExpanded] = useState(false)
-  const [activeFeature, setActiveFeature] = useState(0)
+  const [currentStation, setCurrentStation] = useState(0)
   const [scrollY, setScrollY] = useState(0)
   const [centeredArticle, setCenteredArticle] = useState<number>(2) // Article 2 starts centered
   const videoRef = useRef<HTMLVideoElement>(null)
+  const stationsRef = useRef<(HTMLDivElement | null)[]>([])
 
-  const features = [
+  // Metro stations data
+  const metroStations = [
     {
-      icon: (
-        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-          <polyline points="9 22 9 12 15 12 15 22" />
-        </svg>
-      ),
-      title: 'מגדל ללא מגבלת קומות',
-      description: 'הקרקע מיועדת למגורים מסחר ותעסוקה',
-      gradient: 'linear-gradient(135deg, #005F39 0%, #00A060 50%, #B8860B 100%)'
+      id: 'welcome',
+      name: 'תחנת הברכה',
+      title: 'ברוכים הבאים למסע ההשקעה',
+      description: 'עולים לרכבת לעתיד הנדלן בתל אביב',
+      icon: '🚇',
+      color: '#005F39'
     },
     {
-      icon: (
-        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-          <rect x="3" y="6" width="18" height="12" rx="2" />
-          <circle cx="8" cy="12" r="2" />
-          <circle cx="16" cy="12" r="2" />
-          <line x1="2" y1="18" x2="22" y2="18" />
-        </svg>
-      ),
-      title: 'מפגש תחבורה משולב',
-      description: 'מפגש של ארבעה מוקדי תחבורה: רכבת קלה, מטרו, רכבת ישראל, מסוף אוטובוסים',
-      gradient: 'linear-gradient(135deg, #B8860B 0%, #DAA520 50%, #005F39 100%)'
+      id: 'location',
+      name: 'תחנת המיקום',
+      title: 'מיקום אסטרטגי בלב תל אביב',
+      description: 'מפגש של 4 קווי תחבורה: מטרו, רכבת קלה, רכבת ישראל ואוטובוסים',
+      icon: '📍',
+      color: '#B8860B'
     },
     {
-      icon: (
-        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-          <path d="M12 2L2 7l10 5 10-5-10-5z" />
-          <path d="M2 17l10 5 10-5" />
-          <path d="M2 12l10 5 10-5" />
-        </svg>
-      ),
-      title: 'הזדמנות ייחודית',
-      description: 'קרקע בתל אביב במקום מנצח, בעלת פוטנציאל עליית ערך גבוה',
-      gradient: 'linear-gradient(135deg, #005F39 0%, #00A060 50%, #B8860B 100%)'
+      id: 'potential',
+      name: 'תחנת הפוטנציאל',
+      title: 'זכויות בנייה ללא מגבלות',
+      description: 'מגדל ללא הגבלת קומות במיקום הכי חם בישראל',
+      icon: '🏗️',
+      color: '#00A060'
     },
     {
-      icon: (
-        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
-          <circle cx="12" cy="10" r="3" />
-        </svg>
-      ),
-      title: 'מקום מרכזי',
-      description: 'ציר מרכזי במקום מתפתח, באיזור בעל פוטנציאל תנופה אדיר!',
-      gradient: 'linear-gradient(135deg, #B8860B 0%, #00A060 50%, #005F39 100%)'
+      id: 'investment',
+      name: 'תחנת ההשקעה',
+      title: 'החל מ-799,000 ₪',
+      description: 'הזדמנות השקעה ייחודית עם פוטנציאל עליית ערך גבוה',
+      icon: '💎',
+      color: '#DC2626'
+    },
+    {
+      id: 'contact',
+      name: 'תחנת הקשר',
+      title: 'הצטרפו למסע',
+      description: 'השאירו פרטים ונחזור אליכם עם כל המידע',
+      icon: '📞',
+      color: '#7C3AED'
     }
   ]
+
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLeadData({
@@ -94,17 +91,38 @@ export default function Home() {
 
       if (response.ok) {
         setSubmitMessage('תודה! פרטיכם נשלחו בהצלחה. ניצור איתכם קשר בקרוב.')
-        setLeadData({ name: '', phone: '' })
         
         // Track Facebook Pixel CompleteRegistration event
         if (typeof window !== 'undefined' && window.fbq) {
           window.fbq('track', 'CompleteRegistration')
         }
+        
+        // Track Mixpanel Lead Submission
+        trackEvent('Lead Submitted', {
+          name: leadData.name,
+          phone: leadData.phone,
+          source: 'contact_form',
+          timestamp: new Date().toISOString()
+        })
+        
+        setLeadData({ name: '', phone: '' })
       } else {
         setSubmitMessage('אירעה שגיאה. אנא נסו שוב או התקשרו אלינו ישירות.')
+        
+        // Track form submission error
+        trackEvent('Lead Submission Failed', {
+          error: 'API Error',
+          timestamp: new Date().toISOString()
+        })
       }
     } catch (error) {
       setSubmitMessage('אירעה שגיאה. אנא נסו שוב או התקשרו אלינו ישירות.')
+      
+      // Track form submission error
+      trackEvent('Lead Submission Failed', {
+        error: 'Network Error',
+        timestamp: new Date().toISOString()
+      })
     }
     
     setIsSubmitting(false)
@@ -113,19 +131,70 @@ export default function Home() {
 
   const handleWhatsAppClick = () => {
     const message = encodeURIComponent('שלום, אני מעוניין במידע נוסף על הקרקע בתל אביב')
+    
+    // Track WhatsApp click
+    trackEvent('WhatsApp Click', {
+      source: 'floating_button',
+      timestamp: new Date().toISOString()
+    })
+    
     window.location.href = `https://wa.me/97233850585?text=${message}`
   }
 
   const toggleForm = () => {
-    setIsFormExpanded(!isFormExpanded)
+    const newState = !isFormExpanded
+    setIsFormExpanded(newState)
+    
+    // Track form expansion
+    trackEvent('Form Toggle', {
+      expanded: newState,
+      timestamp: new Date().toISOString()
+    })
   }
 
-  const nextFeature = () => {
-    setActiveFeature((prev) => (prev + 1) % features.length)
+  const nextStation = () => {
+    const nextStationIndex = Math.min(currentStation + 1, metroStations.length - 1)
+    setCurrentStation(nextStationIndex)
+    
+    // Track station navigation
+    trackEvent('Station Navigation', {
+      action: 'next',
+      from_station: metroStations[currentStation].id,
+      to_station: metroStations[nextStationIndex].id,
+      timestamp: new Date().toISOString()
+    })
   }
 
-  const prevFeature = () => {
-    setActiveFeature((prev) => (prev - 1 + features.length) % features.length)
+  const prevStation = () => {
+    const prevStationIndex = Math.max(currentStation - 1, 0)
+    setCurrentStation(prevStationIndex)
+    
+    // Track station navigation
+    trackEvent('Station Navigation', {
+      action: 'previous',
+      from_station: metroStations[currentStation].id,
+      to_station: metroStations[prevStationIndex].id,
+      timestamp: new Date().toISOString()
+    })
+  }
+
+  const goToStation = (stationIndex: number) => {
+    // Track station navigation via nav bar
+    trackEvent('Station Navigation', {
+      action: 'nav_click',
+      from_station: metroStations[currentStation].id,
+      to_station: metroStations[stationIndex].id,
+      timestamp: new Date().toISOString()
+    })
+    
+    setCurrentStation(stationIndex)
+    // Smooth scroll to station
+    if (stationsRef.current[stationIndex]) {
+      stationsRef.current[stationIndex].scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'center'
+      })
+    }
   }
 
   useEffect(() => {
@@ -138,19 +207,32 @@ export default function Home() {
       if (documentHeight - scrollPosition < threshold) {
         setIsFormExpanded(true)
       }
+
+      // Update current station based on scroll position
+      const stationElements = stationsRef.current
+      if (stationElements.length > 0) {
+        const viewportCenter = window.innerHeight / 2 + window.scrollY
+        
+        for (let i = 0; i < stationElements.length; i++) {
+          const element = stationElements[i]
+          if (element) {
+            const rect = element.getBoundingClientRect()
+            const elementCenter = rect.top + window.scrollY + rect.height / 2
+            
+            if (Math.abs(viewportCenter - elementCenter) < window.innerHeight / 3) {
+              if (currentStation !== i) {
+                setCurrentStation(i)
+              }
+              break
+            }
+          }
+        }
+      }
     }
 
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-
-  // Auto-rotate carousel
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveFeature((prev) => (prev + 1) % features.length)
-    }, 5000)
-    return () => clearInterval(interval)
-  }, [features.length])
+  }, [currentStation])
 
   // Auto-play video once (using second half of original video)
   useEffect(() => {
@@ -163,7 +245,25 @@ export default function Home() {
         })
       }
       
+      // Track video play
+      const handlePlay = () => {
+        trackEvent('Video Play', {
+          video: 'property-video-cropped',
+          timestamp: new Date().toISOString()
+        })
+      }
+      
+      // Track video completion
+      const handleEnded = () => {
+        trackEvent('Video Completed', {
+          video: 'property-video-cropped',
+          timestamp: new Date().toISOString()
+        })
+      }
+      
       video.addEventListener('canplay', handleCanPlay)
+      video.addEventListener('play', handlePlay)
+      video.addEventListener('ended', handleEnded)
       
       // If video can already play, start it
       if (video.readyState >= 3) {
@@ -172,47 +272,210 @@ export default function Home() {
       
       return () => {
         video.removeEventListener('canplay', handleCanPlay)
+        video.removeEventListener('play', handlePlay)
+        video.removeEventListener('ended', handleEnded)
       }
     }
   }, [])
 
   return (
-    <main className="main-wrapper">
-      {/* Hero Section with Video Background */}
-      <section className="hero">
-        <div className="hero-video-background">
-          <video
-            ref={videoRef}
-            autoPlay
-            muted
-            playsInline
-            preload="metadata"
-            className="hero-video"
-            style={{ opacity: 0.7 + (scrollY * 0.0003) }}
-          >
-            <source src="/images/property-video-cropped.mp4" type="video/mp4" />
-          </video>
-          <div className="hero-overlay"></div>
+    <main className="metro-wrapper">
+      {/* Metro Navigation Bar */}
+      <nav className="metro-nav">
+        <div className="metro-line">
+          {metroStations.map((station, index) => (
+            <div 
+              key={station.id}
+              className={`metro-station-nav ${index === currentStation ? 'active' : ''} ${index < currentStation ? 'passed' : ''}`}
+              onClick={() => goToStation(index)}
+            >
+              <div className="station-dot" style={{ backgroundColor: station.color }}>
+                <span className="station-icon">{station.icon}</span>
+              </div>
+              <span className="station-name">{station.name}</span>
+            </div>
+          ))}
         </div>
-        <div className="hero-content" style={{ transform: `translateY(${scrollY * 0.2}px)` }}>
-          <h1 className="main-title animate-fade-in">
-            עתיד <strong className="highlight-text">תל אביב</strong> מתחיל כאן.
-          </h1>
-          <div className="price-tag animate-fade-in-delay">
-            <span className="price-label">החל מ־</span>
-            <span className="price-value">799,000 ₪</span>
+        <div className="metro-train" style={{ 
+          transform: `translateX(${currentStation * (100 / (metroStations.length - 1))}%)`,
+          transition: 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)'
+        }}>
+          🚇
+        </div>
+      </nav>
+
+      {/* Metro Stations */}
+      {metroStations.map((station, index) => (
+        <section 
+          key={station.id}
+          ref={(el: HTMLDivElement | null) => {
+            stationsRef.current[index] = el
+          }}
+          className={`metro-station ${index === currentStation ? 'active' : ''}`}
+          style={{ backgroundColor: `${station.color}15` }}
+        >
+          <div className="station-content">
+            <div className="station-header">
+              <div className="station-number">{index + 1}</div>
+              <div className="station-info">
+                <h2 className="station-title">{station.title}</h2>
+                <p className="station-description">{station.description}</p>
+              </div>
+              <div className="station-icon-large" style={{ color: station.color }}>
+                {station.icon}
+              </div>
+            </div>
+            
+            {/* Station-specific content */}
+            {station.id === 'welcome' && (
+              <div className="station-details">
+                <div className="welcome-video">
+                  <video
+                    ref={videoRef}
+                    autoPlay
+                    muted
+                    playsInline
+                    preload="metadata"
+                    className="station-video"
+                  >
+                    <source src="/images/property-video-cropped.mp4" type="video/mp4" />
+                  </video>
+                </div>
+                <div className="welcome-text">
+                  <h3>מסע לעתיד הנדלן בתל אביב</h3>
+                  <p>עלו איתנו לרכבת שתוביל אתכם להזדמנות השקעה ייחודית</p>
+                </div>
+              </div>
+            )}
+
+            {station.id === 'location' && (
+              <div className="station-details">
+                <div className="location-map">
+                  <img 
+                    src="/images/map_crop_test.jpg" 
+                    alt="מפת מיקום הקרקע בתל אביב"
+                    className="map-image"
+                  />
+                  <div className="map-pin">
+                    <div className="pin-icon">📍</div>
+                    <div className="pin-pulse"></div>
+                  </div>
+                </div>
+                <div className="location-highlights">
+                  <div className="highlight-item">
+                    <span className="highlight-icon">🏢</span>
+                    <h4>מרכז עזריאלי</h4>
+                    <p>5 דקות ברכבת הכבדה</p>
+                  </div>
+                  <div className="highlight-item">
+                    <span className="highlight-icon">🌟</span>
+                    <h4>שדרות רוטשילד</h4>
+                    <p>2 תחנות ברכבת הקלה</p>
+                  </div>
+                  <div className="highlight-item">
+                    <span className="highlight-icon">✈️</span>
+                    <h4>שדה תעופה</h4>
+                    <p>15 דקות במטרו</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {station.id === 'potential' && (
+              <div className="station-details">
+                <div className="potential-grid">
+                  <div className="potential-card">
+                    <div className="card-icon">🏗️</div>
+                    <h4>ללא מגבלת קומות</h4>
+                    <p>זכויות בנייה ללא הגבלות גובה</p>
+                  </div>
+                  <div className="potential-card">
+                    <div className="card-icon">🚇</div>
+                    <h4>מפגש תחבורתי</h4>
+                    <p>4 קווי תחבורה במקום אחד</p>
+                  </div>
+                  <div className="potential-card">
+                    <div className="card-icon">📈</div>
+                    <h4>פוטנציאל עליית ערך</h4>
+                    <p>מיקום אסטרטגי בתל אביב</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {station.id === 'investment' && (
+              <div className="station-details">
+                <div className="investment-showcase">
+                  <div className="price-display">
+                    <span className="price-label">החל מ־</span>
+                    <span className="price-value">799,000 ₪</span>
+                    <span className="price-note">הזדמנות השקעה נדירה</span>
+                  </div>
+                  <div className="articles-preview">
+                    <h4>מה התקשורת אומרת?</h4>
+                    <div className="articles-mini">
+                      <img src="/images/calcalist.png" alt="כתבה בקלכליסט" />
+                      <img src="/images/mako.png" alt="כתבה במאקו" />
+                      <img src="/images/ynet.png" alt="כתבה ב-ynet" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {station.id === 'contact' && (
+              <div className="station-details">
+                <div className="contact-form">
+                  <h3>הצטרפו למסע</h3>
+                  <p>השאירו פרטים ונחזור אליכם עם כל המידע על ההזדמנות</p>
+                  <form onSubmit={handleSubmit} className="metro-form">
+                    <input
+                      type="text"
+                      name="name"
+                      placeholder="שם מלא"
+                      value={leadData.name}
+                      onChange={handleInputChange}
+                      required
+                    />
+                    <input
+                      type="tel"
+                      name="phone"
+                      placeholder="טלפון"
+                      value={leadData.phone}
+                      onChange={handleInputChange}
+                      required
+                    />
+                    <button type="submit" disabled={isSubmitting}>
+                      {isSubmitting ? 'שולח...' : 'שלחו פרטים'}
+                    </button>
+                  </form>
+                  {submitMessage && (
+                    <div className={submitMessage.includes('תודה') ? 'success-message' : 'error-message'}>
+                      {submitMessage}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
-          <p className="main-description animate-fade-in-delay-2">
-            השקעה נדירה בקרקע למגורים<br className="mobile-break" /> <strong className="highlight-text">ללא מגבלת קומות</strong><br />
-            <span className="text-spacer"></span>
-            במפגש התחבורתי הלוהט<br className="mobile-break" /> בישראל <strong className="highlight-text">מטרו רכבת קלה ורכבת&nbsp;ישראל</strong>.
-          </p>
-        </div>
-        <div className="scroll-indicator">
-          <div className="mouse"></div>
-          <span>גלול למטה</span>
-        </div>
-      </section>
+
+          {/* Station Navigation */}
+          <div className="station-navigation">
+            {index > 0 && (
+              <button onClick={prevStation} className="nav-btn prev-btn">
+                <span>← תחנה קודמת</span>
+                <small>{metroStations[index - 1].name}</small>
+              </button>
+            )}
+            {index < metroStations.length - 1 && (
+              <button onClick={nextStation} className="nav-btn next-btn">
+                <span>תחנה הבאה →</span>
+                <small>{metroStations[index + 1].name}</small>
+              </button>
+            )}
+          </div>
+        </section>
+      ))}
 
       {/* Floating WhatsApp Button */}
       <button 
@@ -225,261 +488,6 @@ export default function Home() {
           <path d="M23.189 19.36c-.381-.191-2.257-1.113-2.607-1.24-.349-.127-.603-.191-.857.191-.254.381-.984 1.24-1.206 1.494-.222.254-.444.286-.825.095-.381-.191-1.609-.593-3.065-1.891-1.133-.984-1.897-2.201-2.119-2.582-.222-.381-.024-.587.167-.777.171-.171.381-.444.571-.667.191-.222.254-.381.381-.635.127-.254.063-.476-.032-.667-.095-.191-.857-2.065-1.175-2.828-.31-.743-.625-.643-.857-.655-.222-.011-.476-.013-.73-.013s-.667.095-.984.476c-.349.381-1.333 1.302-1.333 3.175s1.365 3.683 1.556 3.937c.191.254 2.688 4.104 6.512 5.755.91.393 1.619.628 2.171.803.913.29 1.744.249 2.401.151.732-.109 2.257-.923 2.575-1.815.317-.891.317-1.655.222-1.815-.095-.159-.349-.254-.73-.444z"/>
         </svg>
       </button>
-
-      {/* Features Carousel Section */}
-      <section className="features-carousel-section">
-        <div className="section-header">
-          <h2 className="section-title">למה לבחור בקרקע הזו?</h2>
-          <p className="section-subtitle">יתרונות שאי אפשר להתעלם מהם</p>
-        </div>
-        
-        <div className="carousel-container">
-          <button className="carousel-btn carousel-btn-prev" onClick={prevFeature} aria-label="קודם">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="carousel-arrow-prev">
-              <polyline points="15 18 9 12 15 6"></polyline>
-            </svg>
-          </button>
-          
-          <div className="carousel-track">
-            {features.map((feature, index) => (
-              <div
-                key={index}
-                className={`carousel-card ${index === activeFeature ? 'active' : ''} ${
-                  index === (activeFeature - 1 + features.length) % features.length ? 'prev' : ''
-                } ${index === (activeFeature + 1) % features.length ? 'next' : ''}`}
-              >
-                <div className="card-inner" style={{ background: `linear-gradient(135deg, white 0%, #fafafa 100%)` }}>
-                  <div className="feature-icon-large" style={{ 
-                    background: feature.gradient,
-                    WebkitMaskImage: 'linear-gradient(black, black)',
-                    maskImage: 'linear-gradient(black, black)'
-                  }}>
-                    {feature.icon}
-                  </div>
-                  <h3 className="feature-title">{feature.title}</h3>
-                  <p className="feature-description">{feature.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-          
-          <button className="carousel-btn carousel-btn-next" onClick={nextFeature} aria-label="הבא">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="carousel-arrow-next">
-              <polyline points="9 18 15 12 9 6"></polyline>
-            </svg>
-          </button>
-        </div>
-
-        <div className="carousel-dots">
-          {features.map((_, index) => (
-            <button
-              key={index}
-              className={`dot ${index === activeFeature ? 'active' : ''}`}
-              onClick={() => setActiveFeature(index)}
-              aria-label={`עבור לתכונה ${index + 1}`}
-            />
-          ))}
-        </div>
-      </section>
-
-      {/* Features Grid for Desktop */}
-      <section className="features-grid-section">
-        <div className="features-container">
-          <div className="features-grid">
-            {features.map((feature, index) => (
-              <div key={index} className="feature-card-grid">
-                <div className="feature-icon" style={{ color: '#005F39' }}>
-                  {feature.icon}
-                </div>
-                <h3>{feature.title}</h3>
-                <p>{feature.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Location Section */}
-      <section className="location">
-        <div className="location-container">
-          <h2 className="section-title">מיקום אסטרטגי בתל אביב</h2>
-          <p className="section-subtitle">
-            הקרקע ממוקמת במיקום אסטרטגי בתל אביב, עם גישה מעולה לכל חלקי העיר ואזור המרכז
-          </p>
-          
-          <div className="map-container">
-            <div className="map-wrapper">
-              <img 
-                src="/images/map_crop_test.jpg" 
-                alt="מפת מיקום הקרקע בתל אביב עם קווי הרכבת הקלה והמטרו"
-                className="map-image"
-              />
-              <div className="map-pin">
-                <div className="pin-icon">
-                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" fill="#DC2626" stroke="#B91C1C" strokeWidth="2"/>
-                    <circle cx="12" cy="10" r="3" fill="white"/>
-                  </svg>
-                </div>
-                <div className="pin-pulse"></div>
-              </div>
-            </div>
-          </div>
-          
-          <div className="location-highlights">
-            <div className="highlight-item">
-              <div className="icon">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <rect x="4" y="2" width="16" height="20" rx="2" ry="2" />
-                  <path d="M9 22v-4h6v4" />
-                  <path d="M8 6h.01" />
-                  <path d="M16 6h.01" />
-                  <path d="M12 6h.01" />
-                  <path d="M12 10h.01" />
-                  <path d="M8 10h.01" />
-                  <path d="M16 10h.01" />
-                  <path d="M8 14h.01" />
-                  <path d="M16 14h.01" />
-                  <path d="M12 14h.01" />
-                </svg>
-              </div>
-              <h4>מרכז עזריאלי</h4>
-              <p>5 דקות ברכבת הכבדה</p>
-            </div>
-            <div className="highlight-item">
-              <div className="icon">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                  <path d="M2 17l10 5 10-5M2 12l10 5 10-5" />
-                </svg>
-              </div>
-              <h4>שדרות רוטשילד</h4>
-              <p>2 תחנות ברכבת הקלה</p>
-            </div>
-            <div className="highlight-item">
-              <div className="icon">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z" />
-                </svg>
-              </div>
-              <h4>שדה תעופה</h4>
-              <p>15 דקות במטרו</p>
-            </div>
-            <div className="highlight-item">
-              <div className="icon">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <circle cx="12" cy="12" r="10" />
-                  <line x1="22" y1="12" x2="18" y2="12" />
-                  <line x1="6" y1="12" x2="2" y2="12" />
-                  <line x1="12" y1="6" x2="12" y2="2" />
-                  <line x1="12" y1="22" x2="12" y2="18" />
-                </svg>
-              </div>
-              <h4>כבישים ראשיים</h4>
-              <p>גישה ישירה לנתיבי איילון, כביש 1, כביש 44</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Articles Section */}
-      <section className="articles-section">
-        <div className="articles-container">
-          <div className="section-header">
-            <h2 className="section-title">מה התקשורת אומרת?</h2>
-            <p className="section-subtitle">כתבות ודיווחים על הפרויקט מהתקשורת המובילה</p>
-          </div>
-          
-          <div className="articles-fan">
-            <div 
-              className={`article-card article-1 ${
-                centeredArticle === 1 ? 'active-front' : 'position-1'
-              }`}
-              onClick={() => {
-                if (centeredArticle !== 1) {
-                  setCenteredArticle(1)
-                }
-              }}
-            >
-              <img src="/images/calcalist.png" alt="כתבה בקשתליסט על הפרויקט" />
-            </div>
-            <div 
-              className={`article-card article-2 ${
-                centeredArticle === 2 ? 'active-front' : 
-                centeredArticle === 1 ? 'position-1' : 
-                'position-3'
-              }`}
-              onClick={() => {
-                if (centeredArticle !== 2) {
-                  setCenteredArticle(2)
-                }
-              }}
-            >
-              <img src="/images/mako.png" alt="כתבה במאקו על הפרויקט" />
-            </div>
-            <div 
-              className={`article-card article-3 ${
-                centeredArticle === 3 ? 'active-front' : 'position-3'
-              }`}
-              onClick={() => {
-                if (centeredArticle !== 3) {
-                  setCenteredArticle(3)
-                }
-              }}
-            >
-              <img src="/images/ynet.png" alt="כתבה בynet על הפרויקט" />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Floating Footer */}
-      <div className={`floating-footer ${isFormExpanded ? 'expanded' : 'collapsed'}`}>
-        <button className="form-toggle-button" onClick={toggleForm} aria-label="פתח טופס">
-          <span>שלחו פרטים</span>
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-            <path d="M10 5l-7 7h4v3h6v-3h4z"/>
-          </svg>
-        </button>
-        
-        <div className="footer-content">
-          <div className="footer-actions">
-            <div className="form-header">
-              <span className="form-cta-text">הירשמו לקבלת פרטים נוספים</span>
-              <button className="form-close-button" onClick={toggleForm} aria-label="סגור טופס">
-                ✕
-              </button>
-            </div>
-            <form className="lead-form" onSubmit={handleSubmit}>
-              <input
-                type="text"
-                name="name"
-                placeholder="שם מלא"
-                value={leadData.name}
-                onChange={handleInputChange}
-                required
-              />
-              <input
-                type="tel"
-                name="phone"
-                placeholder="טלפון"
-                value={leadData.phone}
-                onChange={handleInputChange}
-                required
-              />
-              <button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? 'שולח...' : 'שלחו פרטים'}
-              </button>
-            </form>
-          </div>
-        </div>
-        
-        {submitMessage && (
-          <div className={submitMessage.includes('תודה') ? 'success-message' : 'error-message'}>
-            {submitMessage}
-          </div>
-        )}
-      </div>
     </main>
   )
 }
