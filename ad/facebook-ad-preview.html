@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>תצוגה מקדימה - פרסומת פייסבוק</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -110,7 +111,7 @@
         .fb-ad-image {
             width: 100%;
             height: 0;
-            padding-bottom: 125%; /* יחס 4:5 (רוחב:גובה) - פורמט מומלץ לפייסבוק */
+            padding-bottom: 100%; /* יחס 1:1 (ריבוע) - פורמט מומלץ לפייסבוק */
             position: relative;
             overflow: hidden;
             background: #000000;
@@ -128,8 +129,9 @@
 
         .fb-ad-image-bg {
             width: 100%;
-            height: 100%;
+            height: 110%;
             object-fit: cover;
+            object-position: center top;
             position: absolute;
             top: 0;
             left: 0;
@@ -139,34 +141,41 @@
         .fb-ad-image.land-image {
             display: flex;
             flex-direction: column;
-            padding-bottom: 0;
-            height: auto;
-            min-height: 600px;
+            padding-bottom: 100%; /* שמירה על יחס 1:1 */
+            height: 0;
+            position: relative;
         }
 
         .fb-ad-image.land-image .land-text-section {
-            flex: 1;
-            background: linear-gradient(135deg, rgba(0, 95, 57, 0.98) 0%, rgba(0, 160, 96, 0.98) 100%);
-            padding: 3rem 2rem;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(135deg, rgba(0, 95, 57, 0.98) 0%, rgba(0, 160, 96, 0.98) 70%, rgba(0, 160, 96, 0.85) 85%, rgba(0, 160, 96, 0.6) 95%, rgba(0, 160, 96, 0.2) 100%);
+            padding: 1.5rem;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            position: relative;
-            min-height: 300px;
+            z-index: 3;
+            overflow: visible;
         }
 
         .fb-ad-image.land-image .land-image-section {
-            flex: 1;
-            position: relative;
-            min-height: 300px;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
             overflow: hidden;
         }
 
         .fb-ad-image.land-image .land-image-bg {
             width: 100%;
-            height: 100%;
+            height: 110%;
             object-fit: cover;
+            object-position: center top;
             position: absolute;
             top: 0;
             left: 0;
@@ -237,7 +246,14 @@
             text-align: center;
             color: white;
             width: 100%;
-            max-width: 600px;
+            max-width: 100%;
+        }
+        
+        .fb-ad-image.land-image .land-image-section .price-container-image {
+            position: absolute;
+            bottom: 1rem;
+            left: 1rem;
+            z-index: 10;
         }
 
         .fb-ad-image-overlay {
@@ -283,9 +299,9 @@
         }
 
         .fb-ad-hero-title {
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: 700;
-            margin-bottom: 1rem;
+            margin-bottom: 0.8rem;
             background: linear-gradient(135deg, #B8860B 0%, #ffffff 50%, #005F39 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -306,9 +322,9 @@
 
         .fb-ad-hero-description {
             color: rgba(255, 255, 255, 0.95);
-            font-size: 1.2rem;
+            font-size: 1rem;
             font-weight: 400;
-            margin: 1rem 0;
+            margin: 0.5rem 0;
             line-height: 1.4;
             text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
         }
@@ -331,12 +347,12 @@
             display: inline-flex;
             flex-direction: column;
             align-items: center;
-            margin-top: 1.5rem;
-            padding: 1rem 2rem;
+            margin-top: 0.8rem;
+            padding: 0.8rem 1.5rem;
             background: rgba(0, 95, 57, 0.95);
             backdrop-filter: blur(30px);
             -webkit-backdrop-filter: blur(30px);
-            border-radius: 16px;
+            border-radius: 12px;
             border: 2px solid #B8860B;
             box-shadow: 0 4px 16px rgba(184, 134, 11, 0.4);
         }
@@ -348,7 +364,7 @@
         }
 
         .fb-ad-price-value {
-            font-size: 2rem;
+            font-size: 1.5rem;
             font-weight: 700;
             color: #ffffff;
         }
@@ -370,23 +386,27 @@
 
         @media (max-width: 600px) {
             .fb-ad-hero-title {
-                font-size: 2.5rem;
+                font-size: 1.5rem;
             }
             .fb-ad-hero-description {
-                font-size: 1.2rem;
+                font-size: 0.9rem;
             }
             .fb-ad-price-value {
-                font-size: 2.5rem;
+                font-size: 1.2rem;
             }
             .fb-ad-price-tag {
-                padding: 1.2rem 2rem;
+                padding: 0.6rem 1rem;
+                margin-top: 0.5rem;
             }
             .fb-ad-cta {
                 font-size: 16px;
                 padding: 14px 20px;
             }
             .fb-ad-image {
-                padding-bottom: 125%; /* שמירה על יחס 4:5 גם במובייל */
+                padding-bottom: 100%; /* שמירה על יחס 1:1 גם במובייל */
+            }
+            .fb-ad-image.land-image .land-text-section {
+                padding: 1rem;
             }
         }
 
@@ -473,6 +493,34 @@
         .emoji {
             font-size: 18px;
         }
+
+        .export-btn {
+            background: linear-gradient(135deg, #1877f2, #42a5f5);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 10px 5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(24, 119, 242, 0.3);
+        }
+
+        .export-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(24, 119, 242, 0.4);
+        }
+
+        .export-section {
+            text-align: center;
+            margin: 20px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
 <body>
@@ -486,7 +534,10 @@
         <h2 style="text-align: center; color: #1c1e21; margin: 40px 0 20px 0; font-size: 18px; font-weight: 600;">
             גרסה 1: תמונת מגדל
         </h2>
-        <div class="fb-ad">
+        <div class="export-section">
+            <button class="export-btn" onclick="exportAd('ad1', 'מודעה-מגדל')">📱 ייצא כתמונה לפייסבוק</button>
+        </div>
+        <div class="fb-ad" id="ad1">
             <div class="fb-ad-header">
                 <div class="fb-ad-logo">🏗️</div>
                 <div class="fb-ad-header-text">
@@ -513,15 +564,24 @@
 לפרטים נוספים - לחצו על הקישור!</div>
             </div>
             <div class="fb-ad-image">
-                <img src="IMG_6229.JPG" alt="מגדל בתל אביב" class="fb-ad-image-bg" onerror="this.src='/IMG_6229.JPG';">
+                <img src="building.JPG" alt="מגדל בתל אביב" class="fb-ad-image-bg" onerror="this.src='./building.JPG';">
                 <div class="fb-ad-image-overlay"></div>
                 <div class="fb-ad-image-content">
-                    <h2 class="fb-ad-hero-title">עתיד תל אביב מתחיל כאן.</h2>
-                    <p class="fb-ad-hero-description">השקעה נדירה בקרקע למגורים ללא מגבלת קומות, במפגש התחבורתי הלוהט בישראל – מטרו, רכבת קלה ורכבת ישראל.</p>
-                    <div class="fb-ad-price-tag">
-                        <span class="fb-ad-price-label">החל מ־</span>
-                        <span class="fb-ad-price-value">799,000 ₪</span>
+                    <h2 class="fb-ad-hero-title" style="font-size: 3rem; font-weight: 700; line-height: 1.2; filter: none !important;">
+                        <span style="color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; background: none !important; text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);">עתיד </span>
+                        <span style="color: #FFD700 !important; -webkit-text-fill-color: #FFD700 !important; background: none !important; text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8); font-size: 3.5rem;">תל אביב</span>
+                        <span style="color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; background: none !important; text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);"> מתחיל כאן.</span>
+                    </h2>
+                    <div class="fb-ad-price-tag" style="margin-top: 1.5rem; border: 3px solid #FFD700; box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);">
+                        <span class="fb-ad-price-label" style="color: #ffffff; font-weight: 600;">החל מ־</span>
+                        <span class="fb-ad-price-value" style="color: #ffffff; text-shadow: 0 3px 12px rgba(0, 0, 0, 0.6); font-size: 2.5rem;">799,000 ₪</span>
                     </div>
+                    <p class="fb-ad-hero-description" style="font-size: 1.2rem; font-weight: 500; margin-top: 1.5rem; line-height: 1.6;">
+                        <span style="color: #ffffff; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);">השקעה נדירה בקרקע למגורים </span>
+                        <span style="color: #FFD700 !important; -webkit-text-fill-color: #FFD700 !important; background: none !important; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8); font-size: 1.6rem; font-weight: 600;">ללא מגבלת קומות</span><br>
+                        <span style="color: #ffffff; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);">במפגש התחבורתי הלוהט בישראל – </span>
+                        <span style="color: #FFD700 !important; -webkit-text-fill-color: #FFD700 !important; background: none !important; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8); font-size: 1.6rem; font-weight: 600;">מטרו, רכבת קלה ורכבת ישראל.</span>
+                    </p>
                 </div>
             </div>
             <div class="fb-ad-footer">
@@ -533,7 +593,10 @@
         <h2 style="text-align: center; color: #1c1e21; margin: 40px 0 20px 0; font-size: 18px; font-weight: 600;">
             גרסה 2: תמונת קרקע
         </h2>
-        <div class="fb-ad">
+        <div class="export-section">
+            <button class="export-btn" onclick="exportAd('ad2', 'מודעה-קרקע')">📱 ייצא כתמונה לפייסבוק</button>
+        </div>
+        <div class="fb-ad" id="ad2">
             <div class="fb-ad-header">
                 <div class="fb-ad-logo">🏗️</div>
                 <div class="fb-ad-header-text">
@@ -563,18 +626,23 @@
                 <!-- אזור הטקסט -->
                 <div class="land-text-section">
                     <div class="land-text-content">
-                        <h2 class="fb-ad-hero-title" style="color: #ffffff; -webkit-text-fill-color: #ffffff; background: none; text-shadow: 0 4px 20px rgba(255, 215, 0, 0.6);">עתיד תל אביב מתחיל כאן.</h2>
-                        <p class="fb-ad-hero-description" style="color: rgba(255, 255, 255, 0.95); text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);">השקעה נדירה בקרקע למגורים ללא מגבלת קומות במפגש התחבורתי הלוהט בישראל – מטרו, רכבת קלה ורכבת ישראל.</p>
-                        <div class="fb-ad-price-tag" style="margin-top: 1.5rem;">
-                            <span class="fb-ad-price-label">החל מ־</span>
-                            <span class="fb-ad-price-value">799,000 ₪</span>
-                        </div>
+                        <h2 class="fb-ad-hero-title" style="font-size: 2.5rem; font-weight: 700; line-height: 1.2; filter: none !important; margin-bottom: 1rem;">
+                            <span style="color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; background: none !important; text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);">עתיד </span>
+                            <span style="color: #FFD700 !important; -webkit-text-fill-color: #FFD700 !important; background: none !important; text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8); font-size: 3rem;">תל אביב</span>
+                            <span style="color: #ffffff !important; -webkit-text-fill-color: #ffffff !important; background: none !important; text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);"> מתחיל כאן.</span>
+                        </h2>
+                        <p class="fb-ad-hero-description" style="font-size: 1.1rem; font-weight: 500; margin-top: 1rem; line-height: 1.5; text-align: center;">
+                            <span style="color: #ffffff; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);">השקעה נדירה בקרקע למגורים </span>
+                            <span style="color: #FFD700 !important; -webkit-text-fill-color: #FFD700 !important; background: none !important; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8); font-size: 1.3rem; font-weight: 600;">ללא מגבלת קומות</span><br>
+                            <span style="color: #ffffff; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);">במפגש התחבורתי הלוהט בישראל – </span>
+                            <span style="color: #FFD700 !important; -webkit-text-fill-color: #FFD700 !important; background: none !important; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8); font-size: 1.3rem; font-weight: 600;">מטרו, רכבת קלה ורכבת ישראל.</span>
+                        </p>
                     </div>
                 </div>
                 
                 <!-- אזור התמונה עם הפין -->
                 <div class="land-image-section">
-                    <img src="IMG_6249.jpg" alt="קרקע בתל אביב" class="land-image-bg" onerror="this.src='/IMG_6249.jpg';">
+                    <img src="map.jpg" alt="קרקע בתל אביב" class="land-image-bg" onerror="this.src='./map.jpg';">
                     <div class="land-image-overlay"></div>
                     <div class="land-map-pin">
                         <div class="land-pin-pulse"></div>
@@ -583,6 +651,12 @@
                                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" fill="#DC2626" stroke="#B91C1C" stroke-width="2"/>
                                 <circle cx="12" cy="10" r="3" fill="white"/>
                             </svg>
+                        </div>
+                    </div>
+                    <div class="price-container-image">
+                        <div class="fb-ad-price-tag" style="border: 2px solid #FFD700; box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4); padding: 0.6rem 1rem; background: rgba(0, 95, 57, 0.95);">
+                            <span class="fb-ad-price-label" style="color: #ffffff; font-weight: 600; font-size: 0.75rem;">החל מ־</span>
+                            <span class="fb-ad-price-value" style="color: #ffffff; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6); font-size: 1.5rem;">799,000 ₪</span>
                         </div>
                     </div>
                 </div>
@@ -659,6 +733,55 @@
             }).catch(err => {
                 alert('שגיאה בהעתקה');
             });
+        }
+
+        async function exportAd(adId, filename) {
+            const adElement = document.getElementById(adId);
+            const btn = event.target;
+            const originalText = btn.textContent;
+            
+            try {
+                // שינוי טקסט הכפתור
+                btn.textContent = '⏳ מייצא...';
+                btn.disabled = true;
+                
+                // יצירת תמונה באיכות גבוהה
+                const canvas = await html2canvas(adElement, {
+                    scale: 2, // איכות גבוהה יותר
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: '#ffffff',
+                    width: adElement.offsetWidth,
+                    height: adElement.offsetHeight,
+                    scrollX: 0,
+                    scrollY: 0
+                });
+                
+                // המרה לקובץ תמונה
+                canvas.toBlob((blob) => {
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.download = `${filename}-${new Date().getTime()}.png`;
+                    link.href = url;
+                    link.click();
+                    URL.revokeObjectURL(url);
+                    
+                    // החזרת הכפתור למצב רגיל
+                    btn.textContent = '✅ הורדה הושלמה!';
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                        btn.disabled = false;
+                    }, 2000);
+                }, 'image/png', 1.0);
+                
+            } catch (error) {
+                console.error('שגיאה בייצוא:', error);
+                btn.textContent = '❌ שגיאה בייצוא';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                }, 2000);
+            }
         }
     </script>
 </body>
