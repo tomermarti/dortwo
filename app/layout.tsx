@@ -6,7 +6,7 @@ import MixpanelProvider from './components/MixpanelProvider'
 export const metadata: Metadata = {
   metadataBase: new URL('https://telaviv.dor-2.com'),
   title: 'עתיד תל אביב מתחיל כאן',
-  description: 'קרקע יוקרתית למכירה בתל אביב עם זכויות בנייה ללא מגבלות. 2 דקות לעזריאלי ברכבת קלה, 21 דקות לשדה התעופה. מחיר: 799,000 ש״ח',
+  description: 'קרקע יוקרתית למכירה בתל אביב עם זכויות בנייה ללא מגבלות. 2 דקות לעזריאלי ברכבת קלה, 21 דקות לשדה התעופה. מחיר: 849,000 ש״ח',
   keywords: 'קרקע למכירה, תל אביב, השקעה, נדלן, זכויות בנייה, רכבת קלה, עזריאלי, רוטשילד',
   icons: {
     icon: '/favicon.ico',
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     apple: '/favicon.ico',
   },
   openGraph: {
-    title: 'קרקע למכירה בתל אביב - 799,000 ש״ח',
+    title: 'קרקע למכירה בתל אביב - 849,000 ש״ח',
     description: 'קרקע יוקרתית עם זכויות בנייה ללא מגבלות במיקום אסטרטגי בתל אביב. 2 דקות לעזריאלי ברכבת קלה, 21 דקות לשדה התעופה.',
     type: 'website',
     url: 'https://telaviv.dor-2.com',
@@ -24,14 +24,14 @@ export const metadata: Metadata = {
         url: 'https://telaviv.dor-2.com/images/site-preview.jpg',
         width: 1200,
         height: 630,
-        alt: 'עתיד תל אביב מתחיל כאן - קרקע למכירה החל מ-799,000 ש״ח',
+        alt: 'עתיד תל אביב מתחיל כאן - קרקע למכירה החל מ-849,000 ש״ח',
       }
     ],
     locale: 'he_IL',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'קרקע למכירה בתל אביב - 799,000 ש״ח',
+    title: 'קרקע למכירה בתל אביב - 849,000 ש״ח',
     description: 'קרקע יוקרתית עם זכויות בנייה ללא מגבלות במיקום אסטרטגי בתל אביב',
     images: ['https://telaviv.dor-2.com/images/site-preview.jpg'],
   }
@@ -64,7 +64,7 @@ export default function RootLayout({
         <meta property="fb:app_id" content="966242223397117" />
         
         {/* Additional Open Graph tags for better compatibility */}
-        <meta property="og:image:alt" content="עתיד תל אביב מתחיל כאן - קרקע למכירה החל מ-799,000 ש״ח" />
+        <meta property="og:image:alt" content="עתיד תל אביב מתחיל כאן - קרקע למכירה החל מ-849,000 ש״ח" />
         <meta property="article:author" content="דור 2" />
         
         {/* Force Facebook to refresh cache */}

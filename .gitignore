@@ -56,19 +56,6 @@ coverage/
 !public/images/**/*.mov
 !public/images/**/*.MOV
 
-# Large images - exclude everywhere except public/images/
-*.png
-*.PNG
-*.jpg
-*.JPG
-*.jpeg
-*.JPEG
-!public/images/**/*.png
-!public/images/**/*.PNG
-!public/images/**/*.jpg
-!public/images/**/*.JPG
-!public/images/**/*.jpeg
-!public/images/**/*.JPEG
 
 # Temporary files
 temp_*

@@ -256,12 +256,15 @@ export default function Home() {
           </h1>
           <div className="price-tag animate-fade-in-delay">
             <span className="price-label">החל מ־</span>
-            <span className="price-value">799,000 ₪</span>
+            <span className="price-value">849,000 ₪</span>
           </div>
           <p className="main-description animate-fade-in-delay-2">
             השקעה נדירה בקרקע למגורים<br className="mobile-break" /> <strong className="highlight-text">ללא מגבלת קומות</strong><br />
             <span className="text-spacer"></span>
             במפגש התחבורתי הלוהט<br className="mobile-break" /> בישראל <strong className="highlight-text">מטרו רכבת קלה ורכבת&nbsp;ישראל</strong>.
+          </p>
+          <p className="hero-disclaimer animate-fade-in-delay-2">
+            * הקרקע אינה זמינה לבניה
           </p>
         </div>
         <div className="scroll-indicator">
@@ -536,6 +539,13 @@ export default function Home() {
           </div>
         )}
       </div>
+
+      {/* Footer Disclaimer */}
+      <footer className="site-footer">
+        <p className="footer-disclaimer">
+          * הקרקע אינה זמינה לבניה
+        </p>
+      </footer>
     </main>
   )
 }

@@ -63,7 +63,7 @@ npx vercel --prod
 ### שינוי מחיר הקרקע
 ערוך את הקובץ `app/page.tsx` ושנה את השורה:
 ```tsx
-<div className="price">799,000 ש״ח</div>
+<div className="price">849,000 ש״ח</div>
 ```
 
 ### שינוי מספר טלפון
