@@ -1474,3 +1474,513 @@ a {
     display: inline;
   }
 }
+
+/* Metro Page Specific Styles */
+.hero-image-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0.9;
+  transition: opacity 0.3s ease;
+}
+
+.main-subtitle {
+  font-size: 2.5rem;
+  font-weight: 400;
+  margin-bottom: 1rem;
+  color: rgba(255, 255, 255, 0.95);
+  letter-spacing: -0.02em;
+}
+
+/* About Section */
+.about-section {
+  padding: 6rem 2rem;
+  background: linear-gradient(135deg, #f0fff0 0%, #ffffff 50%, #fdf5e6 100%);
+}
+
+.about-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.about-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  margin-top: 3rem;
+}
+
+.about-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.about-paragraph {
+  font-size: 1.25rem;
+  line-height: 1.8;
+  color: #1d1d1f;
+  font-weight: 400;
+}
+
+.about-paragraph strong {
+  color: #005F39;
+  font-weight: 600;
+}
+
+.highlight-paragraph {
+  background: linear-gradient(135deg, rgba(0, 95, 57, 0.1) 0%, rgba(184, 134, 11, 0.1) 100%);
+  padding: 2rem;
+  border-radius: 16px;
+  border-right: 4px solid #005F39;
+}
+
+.about-image {
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+.about-img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* TAMA Section */
+.tama-section {
+  padding: 6rem 2rem;
+  background: white;
+}
+
+.tama-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.tama-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  margin-top: 3rem;
+}
+
+.tama-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.tama-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background: #f5f5f7;
+  border-radius: 16px;
+  transition: all 0.3s ease;
+}
+
+.tama-item:hover {
+  background: white;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  transform: translateX(-8px);
+}
+
+.tama-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #005F39 0%, #00A060 50%, #B8860B 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.tama-item p {
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: #1d1d1f;
+  margin: 0;
+}
+
+.tama-image {
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+.tama-img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Location Features */
+.location-features {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+  margin: 3rem 0;
+}
+
+.location-feature-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 24px;
+  text-align: center;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.location-feature-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+}
+
+.location-icon {
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #005F39;
+}
+
+.location-feature-card h4 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1d1d1f;
+  margin: 0;
+}
+
+.location-detail-image {
+  margin-top: 4rem;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+.location-detail-img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Planning Section */
+.planning-section {
+  padding: 6rem 2rem;
+  background: linear-gradient(135deg, #fdf5e6 0%, #ffffff 50%, #f0fff0 100%);
+}
+
+.planning-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.planning-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  margin-top: 3rem;
+}
+
+.planning-info {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+}
+
+.planning-item {
+  background: white;
+  padding: 2rem;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.planning-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+}
+
+.planning-item h3 {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #6e6e73;
+  margin-bottom: 0.5rem;
+}
+
+.planning-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #005F39;
+  margin: 0;
+}
+
+.planning-image {
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+.planning-img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* TAMA 70 Section */
+.tama70-section {
+  padding: 6rem 2rem;
+  background: white;
+}
+
+.tama70-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.tama70-content {
+  margin-top: 3rem;
+}
+
+.tama70-text {
+  max-width: 800px;
+  margin: 0 auto 4rem;
+}
+
+.tama70-paragraph {
+  font-size: 1.25rem;
+  line-height: 1.8;
+  color: #1d1d1f;
+  margin-bottom: 1.5rem;
+}
+
+.tama70-list {
+  list-style: none;
+  padding: 0;
+  margin: 2rem 0;
+}
+
+.tama70-list li {
+  font-size: 1.25rem;
+  line-height: 2;
+  color: #1d1d1f;
+  padding-right: 2rem;
+  position: relative;
+}
+
+.tama70-list li::before {
+  content: '✓';
+  position: absolute;
+  right: 0;
+  color: #005F39;
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+.tama70-images {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+.tama70-image-item {
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+  transition: all 0.3s ease;
+}
+
+.tama70-image-item:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+.tama70-img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Junction Section */
+.junction-section {
+  padding: 6rem 2rem;
+  background: linear-gradient(135deg, #f0fff0 0%, #ffffff 50%, #fdf5e6 100%);
+}
+
+.junction-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.junction-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+  margin-top: 3rem;
+}
+
+.junction-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.junction-paragraph {
+  font-size: 1.25rem;
+  line-height: 1.8;
+  color: #1d1d1f;
+}
+
+.junction-subtitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #005F39;
+  margin-top: 1rem;
+}
+
+.junction-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+}
+
+.junction-list li {
+  font-size: 1.125rem;
+  line-height: 2;
+  color: #1d1d1f;
+  padding-right: 2rem;
+  position: relative;
+}
+
+.junction-list li::before {
+  content: '•';
+  position: absolute;
+  right: 0;
+  color: #005F39;
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+
+.junction-image {
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+.junction-img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Cross Section */
+.cross-section {
+  padding: 6rem 2rem;
+  background: white;
+}
+
+.cross-section-container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.cross-section-image {
+  margin-top: 3rem;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+.cross-section-img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Render Section */
+.render-section {
+  padding: 6rem 2rem;
+  background: linear-gradient(135deg, #fdf5e6 0%, #ffffff 50%, #f0fff0 100%);
+}
+
+.render-container {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.render-image {
+  margin-top: 3rem;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+.render-img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Mobile Responsive for Metro Page */
+@media (max-width: 734px) {
+  .main-subtitle {
+    font-size: 1.75rem;
+  }
+
+  .about-content,
+  .tama-content,
+  .junction-content,
+  .planning-content {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .about-paragraph,
+  .tama70-paragraph,
+  .junction-paragraph {
+    font-size: 1.125rem;
+  }
+
+  .location-features {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .planning-info {
+    grid-template-columns: 1fr;
+  }
+
+  .tama70-images {
+    grid-template-columns: 1fr;
+  }
+
+  .about-image,
+  .tama-image,
+  .planning-image,
+  .junction-image {
+    order: -1;
+  }
+}
