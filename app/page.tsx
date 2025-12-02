@@ -37,19 +37,15 @@ export default function Home() {
   const handleArticleClick = (clickedOrderIndex: number) => {
     if (clickedOrderIndex === 1) return // Already centered, do nothing
     
-    console.log('Clicked order index:', clickedOrderIndex, 'Current order:', articleOrder)
-    
     if (clickedOrderIndex === 0) {
       // Clicked left card - rotate right (bring left to center)
       // [0, 1, 2] -> [2, 0, 1]
       const newOrder = [articleOrder[2], articleOrder[0], articleOrder[1]]
-      console.log('Rotating right, new order:', newOrder)
       setArticleOrder(newOrder)
     } else {
       // Clicked right card - rotate left (bring right to center)
       // [0, 1, 2] -> [1, 2, 0]
       const newOrder = [articleOrder[1], articleOrder[2], articleOrder[0]]
-      console.log('Rotating left, new order:', newOrder)
       setArticleOrder(newOrder)
     }
   }
