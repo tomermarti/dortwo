@@ -19,9 +19,43 @@ export default function Home() {
   const [submitMessage, setSubmitMessage] = useState('')
   const [isFormExpanded, setIsFormExpanded] = useState(false)
   const [activeFeature, setActiveFeature] = useState(0)
-  const [scrollY, setScrollY] = useState(0)
-  const [centeredArticle, setCenteredArticle] = useState<number>(2) // Article 2 starts centered
-  const videoRef = useRef<HTMLVideoElement>(null)
+  const [articleOrder, setArticleOrder] = useState([0, 1, 2]) // Track the order of articles
+
+  const articles = [
+    { id: 'calcalist', src: '/images/calcalist.png', alt: 'כתבה בקלכליסט על הפרויקט' },
+    { id: 'mako', src: '/images/mako.png', alt: 'כתבה במאקו על הפרויקט' },
+    { id: 'ynet', src: '/images/ynet.png', alt: 'כתבה בynet על הפרויקט' }
+  ]
+
+  const getArticlePosition = (orderIndex: number) => {
+    // orderIndex 0 = left, 1 = center, 2 = right
+    if (orderIndex === 1) return 'active-front' // Center
+    if (orderIndex === 0) return 'position-1' // Left
+    return 'position-3' // Right
+  }
+
+  const handleArticleClick = (clickedOrderIndex: number) => {
+    if (clickedOrderIndex === 1) return // Already centered, do nothing
+    
+    console.log('Clicked order index:', clickedOrderIndex, 'Current order:', articleOrder)
+    
+    if (clickedOrderIndex === 0) {
+      // Clicked left card - rotate right (bring left to center)
+      // [0, 1, 2] -> [2, 0, 1]
+      const newOrder = [articleOrder[2], articleOrder[0], articleOrder[1]]
+      console.log('Rotating right, new order:', newOrder)
+      setArticleOrder(newOrder)
+    } else {
+      // Clicked right card - rotate left (bring right to center)
+      // [0, 1, 2] -> [1, 2, 0]
+      const newOrder = [articleOrder[1], articleOrder[2], articleOrder[0]]
+      console.log('Rotating left, new order:', newOrder)
+      setArticleOrder(newOrder)
+    }
+  }
+  
+  const heroContentRef = useRef<HTMLDivElement>(null)
+  const heroVideoRef = useRef<HTMLVideoElement>(null)
 
   const features = [
     {
@@ -83,6 +117,7 @@ export default function Home() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
+    console.log('DEBUG: Submitting form', leadData);
     
     try {
       const response = await fetch('/api/submit-lead', {
@@ -93,12 +128,14 @@ export default function Home() {
         body: JSON.stringify(leadData),
       })
 
+      console.log('DEBUG: Response received', response.status);
       if (response.ok) {
         setSubmitMessage('תודה! פרטיכם נשלחו בהצלחה. ניצור איתכם קשר בקרוב.')
         
         // Track Facebook Pixel CompleteRegistration event
         if (typeof window !== 'undefined' && window.fbq) {
-          window.fbq('track', 'CompleteRegistration')
+          console.log('DEBUG: Firing Pixel');
+          window.fbq('track', 'CompleteRegistration', { content_name: 'Land Investment Lead Form', status: 'completed' })
         }
         
         // Track Mixpanel Lead Submission
@@ -165,18 +202,39 @@ export default function Home() {
   }
 
   useEffect(() => {
+    let ticking = false
+    
     const handleScroll = () => {
-      setScrollY(window.scrollY)
-      const scrollPosition = window.innerHeight + window.scrollY
-      const documentHeight = document.documentElement.scrollHeight
-      const threshold = 100
+      const currentScrollY = window.scrollY
+      
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          // Parallax effect for hero content
+          if (heroContentRef.current) {
+            heroContentRef.current.style.transform = `translate3d(0, ${currentScrollY * 0.2}px, 0)`
+          }
+          
+          // Parallax/Fade effect for hero video
+          if (heroVideoRef.current) {
+            heroVideoRef.current.style.opacity = (0.7 + (currentScrollY * 0.0003)).toString()
+          }
 
-      if (documentHeight - scrollPosition < threshold) {
-        setIsFormExpanded(true)
+          const scrollPosition = window.innerHeight + currentScrollY
+          const documentHeight = document.documentElement.scrollHeight
+          const threshold = 100
+
+          if (documentHeight - scrollPosition < threshold) {
+            setIsFormExpanded(true)
+          }
+          
+          ticking = false
+        })
+        
+        ticking = true
       }
     }
 
-    window.addEventListener('scroll', handleScroll)
+    window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
@@ -190,7 +248,7 @@ export default function Home() {
 
   // Auto-play video once (using second half of original video)
   useEffect(() => {
-    const video = videoRef.current
+    const video = heroVideoRef.current
     if (video) {
       // Simple autoplay when video can play
       const handleCanPlay = () => {
@@ -238,19 +296,19 @@ export default function Home() {
       <section className="hero">
         <div className="hero-video-background">
           <video
-            ref={videoRef}
+            ref={heroVideoRef}
             autoPlay
             muted
             playsInline
             preload="metadata"
             className="hero-video"
-            style={{ opacity: 0.7 + (scrollY * 0.0003) }}
+            style={{ opacity: 0.7 }}
           >
             <source src="/images/property-video-cropped.mp4" type="video/mp4" />
           </video>
           <div className="hero-overlay"></div>
         </div>
-        <div className="hero-content" style={{ transform: `translateY(${scrollY * 0.2}px)` }}>
+        <div className="hero-content" ref={heroContentRef}>
           <h1 className="main-title animate-fade-in">
             עתיד <strong className="highlight-text">תל אביב</strong> מתחיל כאן.
           </h1>
@@ -450,44 +508,26 @@ export default function Home() {
           </div>
           
           <div className="articles-fan">
-            <div 
-              className={`article-card article-1 ${
-                centeredArticle === 1 ? 'active-front' : 'position-1'
-              }`}
-              onClick={() => {
-                if (centeredArticle !== 1) {
-                  setCenteredArticle(1)
-                }
-              }}
-            >
-              <img src="/images/calcalist.png" alt="כתבה בקשתליסט על הפרויקט" />
-            </div>
-            <div 
-              className={`article-card article-2 ${
-                centeredArticle === 2 ? 'active-front' : 
-                centeredArticle === 1 ? 'position-1' : 
-                'position-3'
-              }`}
-              onClick={() => {
-                if (centeredArticle !== 2) {
-                  setCenteredArticle(2)
-                }
-              }}
-            >
-              <img src="/images/mako.png" alt="כתבה במאקו על הפרויקט" />
-            </div>
-            <div 
-              className={`article-card article-3 ${
-                centeredArticle === 3 ? 'active-front' : 'position-3'
-              }`}
-              onClick={() => {
-                if (centeredArticle !== 3) {
-                  setCenteredArticle(3)
-                }
-              }}
-            >
-              <img src="/images/ynet.png" alt="כתבה בynet על הפרויקט" />
-            </div>
+            {articleOrder.map((articleIndex, orderIndex) => {
+              const article = articles[articleIndex]
+              const position = getArticlePosition(orderIndex)
+              // Center card has highest z-index
+              const zIndex = orderIndex === 1 ? 100 : orderIndex === 2 ? 2 : 1
+              
+              return (
+                <div 
+                  key={`${article.id}-${orderIndex}`}
+                  className={`article-card ${position}`}
+                  onClick={() => handleArticleClick(orderIndex)}
+                  style={{
+                    cursor: 'pointer',
+                    zIndex
+                  }}
+                >
+                  <img src={article.src} alt={article.alt} />
+                </div>
+              )
+            })}
           </div>
         </div>
       </section>

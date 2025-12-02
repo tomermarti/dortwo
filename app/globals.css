@@ -674,34 +674,40 @@ a {
 
 /* Position classes for dynamic swapping */
 .article-card.position-1 {
-  transform: rotate(-15deg) translateX(-180px) !important;
+  transform: rotate(-15deg) translateX(-320px) scale(0.8) !important;
   z-index: 1;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  opacity: 0.8;
 }
 
 .article-card.position-2 {
-  transform: rotate(0deg) translateX(0px) !important;
+  transform: rotate(0deg) translateX(0px) scale(1) !important;
   z-index: 3;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .article-card.position-3 {
-  transform: rotate(15deg) translateX(180px) !important;
+  transform: rotate(15deg) translateX(320px) scale(0.8) !important;
   z-index: 2;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  opacity: 0.8;
 }
 
 /* Active article comes to front and centered */
 .article-card.active-front {
   z-index: 100 !important;
-  transform: rotate(0deg) translateX(0px) !important;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: rotate(0deg) translateX(0px) scale(1) !important;
+  transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   width: 450px !important;
   height: 600px !important;
+  opacity: 1;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
 }
 
 .article-1:hover:not(.active-front) {
-  transform: rotate(-10deg) translateX(-180px) scale(1.05) translateY(-10px);
+  transform: rotate(-10deg) translateX(-320px) scale(0.85) translateY(-10px) !important;
+  opacity: 1;
+  z-index: 90;
 }
 
 .article-2:hover:not(.active-front) {
@@ -709,7 +715,9 @@ a {
 }
 
 .article-3:hover:not(.active-front) {
-  transform: rotate(10deg) translateX(180px) scale(1.05) translateY(-10px);
+  transform: rotate(10deg) translateX(320px) scale(0.85) translateY(-10px) !important;
+  opacity: 1;
+  z-index: 90;
 }
 
 .article-card.active-front:hover {
