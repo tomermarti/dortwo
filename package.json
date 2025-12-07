@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "facebook-setup": "node run-facebook-setup.js",
+    "facebook-post": "node -e \"import('./facebook-real-estate-api.js').then(m => m.publishPost(m.alternativePosts.post1.message, m.alternativePosts.post1.imageUrl))\""
   },
   "dependencies": {
     "axios": "^1.6.0",

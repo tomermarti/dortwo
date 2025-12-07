@@ -466,8 +466,8 @@ export default function Home() {
                   <path d="M2 17l10 5 10-5M2 12l10 5 10-5" />
                 </svg>
               </div>
-              <h4>שדרות רוטשילד</h4>
-              <p>2 תחנות ברכבת הקלה</p>
+              <h4>מרכז העסקים של תל אביב</h4>
+              <p>5 תחנות ברכבת הקלה</p>
             </div>
             <div className="highlight-item">
               <div className="icon">
