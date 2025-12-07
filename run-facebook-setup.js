@@ -1,5 +1,5 @@
 // Simple execution script for Facebook page setup
-import { setupRealEstatePage, publishPost, alternativePosts } from './facebook-real-estate-api.js';
+const { setupRealEstatePage, publishPost, alternativePosts } = require('./facebook-real-estate-api.js');
 
 console.log('🚀 Starting Facebook page setup for קרקעות פרימיום...\n');
 

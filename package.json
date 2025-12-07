@@ -8,7 +8,10 @@
     "start": "next start",
     "lint": "next lint",
     "facebook-setup": "node run-facebook-setup.js",
-    "facebook-post": "node -e \"import('./facebook-real-estate-api.js').then(m => m.publishPost(m.alternativePosts.post1.message, m.alternativePosts.post1.imageUrl))\""
+    "facebook-limited": "node facebook-limited-setup.js",
+    "facebook-user-setup": "node facebook-user-token-setup.js",
+    "facebook-post-only": "node -e \"const api = require('./facebook-user-token-setup.js'); api.justPublishPost();\"",
+    "facebook-post": "node -e \"const api = require('./facebook-real-estate-api.js'); api.publishPost(api.alternativePosts.post1.message, api.alternativePosts.post1.imageUrl);\""
   },
   "dependencies": {
     "axios": "^1.6.0",

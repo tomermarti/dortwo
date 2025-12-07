@@ -1,7 +1,7 @@
-import axios from 'axios';
+const axios = require('axios');
 
 // Facebook API configuration for קרקעות פרימיום
-const ACCESS_TOKEN = 'EAFlflr7BXfwBQM0GnQA8toaf6TVBzWlJJZBBUryWmOZBu9rqpvJbHiPyxcSHj3Ha9KuIxzJdbEiZCdopwzKz2DkMw0i5hK3KKlTV42LsTlwGNYZAtvzqDKnnrcxFPUwEUMFHweWcf0E6B5dmEsbDhDJDGPj9ds8DRxUZB6DitBkYtAvAC4sBVJDGAuaVF7ZAiKTB0uvqRwgRaFhZCcRr9EXVIFtkHJ4IR0HxpmsfSkpib9Ys0rZBfBthn2PCFXXZCX8fRPLDJjXrHIzXIQZBxpWgZDZD';
+const ACCESS_TOKEN = 'EAALXeRNJkWEBQLApgrROzVBtvrwPD7lfCQszZAfqv49Twzg3MZBCwMT6yF5f1UJOCwwYOBIsxxreZC8m9mwHyjuP0SbKa7u14DZBfdMmNXr5XUZAmKQK0prx4EmQufUEWctEWdFyOietxGDqOTjJsmUX1DNEXOJK6XWxzY1SnqBt80Kjt8ZAyR1YZAQdkvUZBMUNCwYSdpQnbfzGzuvC3ZBFkP70UZBlhy3k4LIXYeIQZDZD';
 const PAGE_ID = '923280350869125'; // קרקעות פרימיום page ID
 
 // Function to upload cover photo
@@ -239,7 +239,7 @@ const alternativePosts = {
 };
 
 // Export functions for use
-export { 
+module.exports = { 
   uploadCoverPhoto, 
   uploadProfilePhoto, 
   publishPost, 

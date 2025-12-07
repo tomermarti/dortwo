@@ -49,6 +49,20 @@ export default function Home() {
       setArticleOrder(newOrder)
     }
   }
+
+  const nextArticle = () => {
+    // Rotate left (bring right to center)
+    // [0, 1, 2] -> [1, 2, 0]
+    const newOrder = [articleOrder[1], articleOrder[2], articleOrder[0]]
+    setArticleOrder(newOrder)
+  }
+
+  const prevArticle = () => {
+    // Rotate right (bring left to center)
+    // [0, 1, 2] -> [2, 0, 1]
+    const newOrder = [articleOrder[2], articleOrder[0], articleOrder[1]]
+    setArticleOrder(newOrder)
+  }
   
   const heroContentRef = useRef<HTMLDivElement>(null)
   const heroVideoRef = useRef<HTMLVideoElement>(null)
@@ -503,27 +517,41 @@ export default function Home() {
             <p className="section-subtitle">כתבות ודיווחים על הפרויקט מהתקשורת המובילה</p>
           </div>
           
-          <div className="articles-fan">
-            {articleOrder.map((articleIndex, orderIndex) => {
-              const article = articles[articleIndex]
-              const position = getArticlePosition(orderIndex)
-              // Center card has highest z-index
-              const zIndex = orderIndex === 1 ? 100 : orderIndex === 2 ? 2 : 1
-              
-              return (
-                <div 
-                  key={`${article.id}-${orderIndex}`}
-                  className={`article-card ${position}`}
-                  onClick={() => handleArticleClick(orderIndex)}
-                  style={{
-                    cursor: 'pointer',
-                    zIndex
-                  }}
-                >
-                  <img src={article.src} alt={article.alt} />
-                </div>
-              )
-            })}
+          <div className="articles-carousel-container">
+            <button className="articles-carousel-btn articles-carousel-btn-prev" onClick={prevArticle} aria-label="כתבה קודמת">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="articles-carousel-arrow-prev">
+                <polyline points="15 18 9 12 15 6"></polyline>
+              </svg>
+            </button>
+            
+            <div className="articles-fan">
+              {articleOrder.map((articleIndex, orderIndex) => {
+                const article = articles[articleIndex]
+                const position = getArticlePosition(orderIndex)
+                // Center card has highest z-index
+                const zIndex = orderIndex === 1 ? 100 : orderIndex === 2 ? 2 : 1
+                
+                return (
+                  <div 
+                    key={`${article.id}-${orderIndex}`}
+                    className={`article-card ${position}`}
+                    onClick={() => handleArticleClick(orderIndex)}
+                    style={{
+                      cursor: 'pointer',
+                      zIndex
+                    }}
+                  >
+                    <img src={article.src} alt={article.alt} />
+                  </div>
+                )
+              })}
+            </div>
+            
+            <button className="articles-carousel-btn articles-carousel-btn-next" onClick={nextArticle} aria-label="כתבה הבאה">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="articles-carousel-arrow-next">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
           </div>
         </div>
       </section>
