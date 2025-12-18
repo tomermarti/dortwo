@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מודעה פשוטה - מציאה</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;900&display=swap');
+        
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Heebo', Arial, sans-serif;
+            background: #f5f5f5;
+            direction: rtl;
+        }
+        
+        .simple-ad {
+            width: 400px;
+            height: 400px;
+            background: #dc2626;
+            margin: 20px auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            border-radius: 10px;
+            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.3);
+        }
+        
+        .simple-ad h1 {
+            color: white;
+            font-size: 36px;
+            font-weight: 900;
+            margin: 10px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            line-height: 1.1;
+        }
+        
+        .simple-ad .price {
+            color: #fbbf24;
+            font-size: 28px;
+            font-weight: 900;
+            margin: 15px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .simple-ad .details {
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            margin: 10px 0;
+            line-height: 1.4;
+        }
+        
+        .simple-ad .urgent {
+            background: #fbbf24;
+            color: #92400e;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 900;
+            font-size: 16px;
+            margin: 15px 0;
+        }
+        
+        .simple-ad .contact {
+            color: #fecaca;
+            font-size: 16px;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+        
+        .ad-variations {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin: 40px 0;
+        }
+        
+        .controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .btn {
+            background: #059669;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 5px;
+            transition: background 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: #047857;
+        }
+        
+        .square-ad {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .wide-ad {
+            width: 500px;
+            height: 250px;
+        }
+        
+        .story-ad {
+            width: 300px;
+            height: 533px;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center; color: #333; margin-bottom: 30px;">מודעות ליד פשוטות - סגנון "מציאה"</h1>
+    
+    <div class="controls">
+        <button class="btn" onclick="downloadAd('ad1')">💾 הורד מודעה 1</button>
+        <button class="btn" onclick="copyText('ad1')">📋 העתק טקסט 1</button>
+    </div>
+    
+    <!-- מודעה 1 - קלאסית -->
+    <div class="simple-ad" id="ad1">
+        <h1>מציאה!<br>קרקע בת"א</h1>
+        <div class="price">849,000₪</div>
+        <div class="details">
+            ללא מגבלת קומות<br>
+            מטרו + רכבת קלה<br>
+            ללא תיווך
+        </div>
+        <div class="urgent">רק 3 יחידות!</div>
+        <div class="contact">📞 050-1234567</div>
+    </div>
+    
+    <div class="ad-variations">
+        <!-- מודעה 2 - מרובעת -->
+        <div class="simple-ad square-ad" id="ad2" style="background: #b91c1c;">
+            <h1 style="font-size: 28px;">השקעה<br>חכמה!</h1>
+            <div class="price" style="font-size: 24px;">מ-849K</div>
+            <div class="details" style="font-size: 16px;">
+                קרקע פרימיום תל אביב<br>
+                פוטנציאל עליית ערך ענק<br>
+                מיקום אסטרטגי
+            </div>
+            <div class="urgent">מלאי מוגבל</div>
+            <div class="contact" style="font-size: 14px;">💬 שלח הודעה</div>
+        </div>
+        
+        <!-- מודעה 3 - רחבה -->
+        <div class="simple-ad wide-ad" id="ad3" style="background: linear-gradient(90deg, #dc2626, #b91c1c);">
+            <h1 style="font-size: 32px;">🔥 מציאה חמה בתל אביב</h1>
+            <div style="display: flex; align-items: center; justify-content: center; gap: 30px;">
+                <div class="price" style="font-size: 24px;">849,000₪</div>
+                <div class="details" style="font-size: 16px;">
+                    קרקע ללא מגבלות<br>
+                    מטרו + רכבת קלה
+                </div>
+            </div>
+            <div class="urgent">⏰ זמן מוגבל!</div>
+        </div>
+        
+        <!-- מודעה 4 - סטורי -->
+        <div class="simple-ad story-ad" id="ad4" style="background: linear-gradient(180deg, #dc2626, #7f1d1d);">
+            <div style="background: #fbbf24; color: #92400e; padding: 8px 16px; border-radius: 20px; font-weight: 900; margin-bottom: 20px;">
+                💎 הזדמנות זהב
+            </div>
+            <h1 style="font-size: 30px; margin: 20px 0;">
+                קרקע<br>
+                בתל אביב
+            </h1>
+            <div class="price" style="font-size: 26px; margin: 20px 0;">849,000₪</div>
+            <div class="details" style="font-size: 18px; margin: 20px 0;">
+                ✓ ללא מגבלת קומות<br>
+                ✓ מטרו + רכבת קלה<br>
+                ✓ אזור מתפתח<br>
+                ✓ ללא תיווך
+            </div>
+            <div class="urgent" style="margin: 20px 0;">רק 3 נותרו!</div>
+            <div class="contact" style="font-size: 16px;">📞 התקשר עכשיו</div>
+        </div>
+    </div>
+    
+    <div class="controls">
+        <button class="btn" onclick="downloadAd('ad2')">💾 הורד מודעה 2</button>
+        <button class="btn" onclick="downloadAd('ad3')">💾 הורד מודעה 3</button>
+        <button class="btn" onclick="downloadAd('ad4')">💾 הורד מודעה 4</button>
+    </div>
+    
+    <!-- טקסטים להעתקה -->
+    <div style="background: #f9f9f9; padding: 20px; margin: 30px; border-radius: 10px;">
+        <h3>טקסטים למודעות פייסבוק:</h3>
+        
+        <div style="margin: 15px 0; padding: 15px; background: white; border-radius: 8px;">
+            <strong>גרסה 1 - קצרה:</strong><br>
+            🔥 מציאה! קרקע בתל אביב 849,000₪<br>
+            ללא מגבלת קומות | מטרו + רכבת קלה<br>
+            רק 3 יחידות נותרו! 📞 050-1234567
+        </div>
+        
+        <div style="margin: 15px 0; padding: 15px; background: white; border-radius: 8px;">
+            <strong>גרסה 2 - מפורטת:</strong><br>
+            💎 השקעה חכמה בתל אביב!<br>
+            קרקע פרימיום ללא מגבלת קומות<br>
+            📍 מיקום אסטרטגי: מטרו + רכבת קלה<br>
+            💰 החל מ-849,000₪ בלבד<br>
+            ⏰ מלאי מוגבל - התקשרו עכשיו!
+        </div>
+        
+        <div style="margin: 15px 0; padding: 15px; background: white; border-radius: 8px;">
+            <strong>גרסה 3 - דחיפות:</strong><br>
+            🚨 אזהרה: מחירי הקרקעות בתל אביב עולים!<br>
+            🏗️ קרקע ללא מגבלות בנייה - 849K₪<br>
+            🚇 על קווי המטרו והרכבת הקלה<br>
+            ⚡ רק 3 יחידות אחרונות במחיר הזה!
+        </div>
+    </div>
+
+    <script>
+        function downloadAd(adId) {
+            const element = document.getElementById(adId);
+            html2canvas(element, {
+                backgroundColor: null,
+                scale: 2
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `lead-ad-${adId}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        }
+        
+        function copyText(adId) {
+            let text = '';
+            switch(adId) {
+                case 'ad1':
+                    text = `🔥 מציאה! קרקע בתל אביב 849,000₪
+ללא מגבלת קומות | מטרו + רכבת קלה
+רק 3 יחידות נותרו! 📞 050-1234567`;
+                    break;
+                case 'ad2':
+                    text = `💎 השקעה חכמה! קרקע פרימיום תל אביב
+מ-849K₪ | פוטנציאל עליית ערך ענק
+מיקום אסטרטגי | מלאי מוגבל`;
+                    break;
+                default:
+                    text = 'טקסט המודעה';
+            }
+            
+            navigator.clipboard.writeText(text).then(() => {
+                alert('הטקסט הועתק בהצלחה!');
+            });
+        }
+    </script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</body>
+</html>

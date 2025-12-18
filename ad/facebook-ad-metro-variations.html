@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>רובע המטרו - גרסאות מודעות</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            background: #f0f2f5;
+            padding: 40px 20px;
+            direction: rtl;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .page-title {
+            text-align: center;
+            color: #1c1e21;
+            margin-bottom: 40px;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .ads-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .ad-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .ad-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1c1e21;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .ad-image-container {
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .ad-image-container:hover {
+            transform: scale(1.02);
+        }
+
+        .ad-image-container:active {
+            transform: scale(0.98);
+        }
+
+        .copy-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s;
+            border-radius: 8px;
+            pointer-events: none;
+        }
+
+        .ad-image-container:hover .copy-overlay {
+            opacity: 1;
+        }
+
+        .copy-text {
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        /* Ad Image Styles */
+        .fb-ad-image {
+            width: 100%;
+            height: 0;
+            padding-bottom: 100%;
+            position: relative;
+            overflow: hidden;
+            background: #000000;
+            border-radius: 8px;
+        }
+
+        .fb-ad-image-bg {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center center;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .fb-ad-image-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, 
+                rgba(0, 0, 0, 0.4) 0%, 
+                rgba(0, 0, 0, 0.3) 50%, 
+                rgba(0, 0, 0, 0.6) 100%);
+            z-index: 2;
+        }
+
+        .fb-ad-image-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 3;
+            text-align: center;
+            color: white;
+            width: 90%;
+            max-width: 600px;
+        }
+
+        .metro-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(24, 119, 242, 0.95);
+            border-radius: 25px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 12px rgba(24, 119, 242, 0.5);
+        }
+
+        .fb-ad-hero-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #ffffff;
+            line-height: 1.2;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+        }
+
+        .fb-ad-hero-title .highlight {
+            color: #FFD700;
+            font-size: 3rem;
+            display: block;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255, 215, 0, 0.5);
+        }
+
+        .fb-ad-hero-description {
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 1.3rem;
+            font-weight: 500;
+            margin: 1rem 0;
+            line-height: 1.5;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+        }
+
+        .connectivity-tags {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .connectivity-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.4rem 0.8rem;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+        }
+
+        .fb-ad-price-tag {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 1.5rem;
+            padding: 0.8rem 1.5rem;
+            background: rgba(0, 95, 57, 0.95);
+            backdrop-filter: blur(30px);
+            border-radius: 12px;
+            border: 3px solid #FFD700;
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .fb-ad-price-label {
+            font-size: 0.9rem;
+            color: #FFD700;
+            margin-bottom: 0.3rem;
+            font-weight: 600;
+        }
+
+        .fb-ad-price-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #ffffff;
+            text-shadow: 0 3px 12px rgba(0, 0, 0, 0.6);
+        }
+
+        .accessibility-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.2rem;
+            background: linear-gradient(135deg, rgba(0, 95, 57, 0.95), rgba(0, 160, 96, 0.95));
+            border-radius: 25px;
+            margin-top: 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 12px rgba(0, 160, 96, 0.5);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #1877f2, #42a5f5);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(24, 119, 242, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #42b883, #35a876);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(66, 184, 131, 0.4);
+        }
+
+        .success-message {
+            text-align: center;
+            margin-top: 10px;
+            color: #42b883;
+            font-weight: 600;
+            font-size: 14px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .success-message.show {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .ads-grid {
+                grid-template-columns: 1fr;
+            }
+            .fb-ad-hero-title {
+                font-size: 1.8rem;
+            }
+            .fb-ad-hero-title .highlight {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="page-title">🚇 רובע המטרו תל אביב - גרסאות מודעות</h1>
+        
+        <div class="ads-grid">
+            <!-- Variation 1: Full Version -->
+            <div class="ad-card">
+                <h3 class="ad-title">גרסה 1: מלאה עם כל האלמנטים</h3>
+                <div class="ad-image-container" onclick="copyImage('ad1')">
+                    <div class="fb-ad-image" id="ad1">
+                        <img src="metro-eyebird.png" alt="רובע המטרו" class="fb-ad-image-bg">
+                        <div class="fb-ad-image-overlay"></div>
+                        <div class="fb-ad-image-content">
+                            <div class="metro-badge">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                    <rect x="3" y="6" width="18" height="12" rx="2" />
+                                    <circle cx="8" cy="12" r="2" />
+                                    <circle cx="16" cy="12" r="2" />
+                                    <line x1="2" y1="18" x2="22" y2="18" stroke="white" stroke-width="2"/>
+                                </svg>
+                                <span>רובע המטרו</span>
+                            </div>
+                            
+                            <h2 class="fb-ad-hero-title">
+                                עתיד תל אביב
+                                <span class="highlight">מתחיל כאן</span>
+                            </h2>
+                            
+                            <div class="accessibility-badge">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                                </svg>
+                                <span>הנקודה הנגישה ביותר בישראל</span>
+                            </div>
+                            
+                            <div class="connectivity-tags">
+                                <div class="connectivity-tag">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                        <rect x="3" y="6" width="18" height="12" rx="2" />
+                                        <circle cx="8" cy="12" r="2" />
+                                        <circle cx="16" cy="12" r="2" />
+                                    </svg>
+                                    <span>מטרו</span>
+                                </div>
+                                <div class="connectivity-tag">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                        <rect x="4" y="8" width="16" height="8" rx="2" />
+                                    </svg>
+                                    <span>רכבת קלה</span>
+                                </div>
+                                <div class="connectivity-tag">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                        <rect x="3" y="6" width="18" height="14" rx="3" />
+                                    </svg>
+                                    <span>רכבת ישראל</span>
+                                </div>
+                                <div class="connectivity-tag">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                                        <rect x="2" y="7" width="20" height="10" rx="2" />
+                                    </svg>
+                                    <span>אוטובוסים</span>
+                                </div>
+                            </div>
+                            
+                            <div class="fb-ad-price-tag">
+                                <span class="fb-ad-price-label">החל מ־</span>
+                                <span class="fb-ad-price-value">849,000 ₪</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="copy-overlay">
+                        <span class="copy-text">👆 לחץ להעתקה</span>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="copyImage('ad1')">📋 העתק תמונה</button>
+                    <button class="btn btn-secondary" onclick="downloadImage('ad1', 'metro-full')">⬇️ הורד</button>
+                </div>
+                <div class="success-message" id="msg-ad1"></div>
+            </div>
+
+            <!-- Variation 2: Minimal -->
+            <div class="ad-card">
+                <h3 class="ad-title">גרסה 2: מינימליסטית</h3>
+                <div class="ad-image-container" onclick="copyImage('ad2')">
+                    <div class="fb-ad-image" id="ad2">
+                        <img src="metro-eyebird.png" alt="רובע המטרו" class="fb-ad-image-bg">
+                        <div class="fb-ad-image-overlay"></div>
+                        <div class="fb-ad-image-content">
+                            <h2 class="fb-ad-hero-title">
+                                <span class="highlight">רובע המטרו</span>
+                                תל אביב
+                            </h2>
+                            
+                            <p class="fb-ad-hero-description">
+                                הזדמנות לקחת חלק<br>
+                                בעתיד העיר
+                            </p>
+                            
+                            <div class="fb-ad-price-tag">
+                                <span class="fb-ad-price-label">החל מ־</span>
+                                <span class="fb-ad-price-value">849,000 ₪</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="copy-overlay">
+                        <span class="copy-text">👆 לחץ להעתקה</span>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="copyImage('ad2')">📋 העתק תמונה</button>
+                    <button class="btn btn-secondary" onclick="downloadImage('ad2', 'metro-minimal')">⬇️ הורד</button>
+                </div>
+                <div class="success-message" id="msg-ad2"></div>
+            </div>
+
+            <!-- Variation 3: Focus on Accessibility -->
+            <div class="ad-card">
+                <h3 class="ad-title">גרסה 3: דגש על נגישות</h3>
+                <div class="ad-image-container" onclick="copyImage('ad3')">
+                    <div class="fb-ad-image" id="ad3">
+                        <img src="metro-eyebird.png" alt="רובע המטרו" class="fb-ad-image-bg">
+                        <div class="fb-ad-image-overlay"></div>
+                        <div class="fb-ad-image-content">
+                            <h2 class="fb-ad-hero-title">
+                                <span class="highlight" style="font-size: 2rem;">הנקודה הנגישה ביותר</span>
+                                בישראל
+                            </h2>
+                            
+                            <div class="connectivity-tags">
+                                <div class="connectivity-tag">
+                                    <span>🚇 מטרו</span>
+                                </div>
+                                <div class="connectivity-tag">
+                                    <span>🚊 רכבת קלה</span>
+                                </div>
+                                <div class="connectivity-tag">
+                                    <span>🚂 רכבת ישראל</span>
+                                </div>
+                                <div class="connectivity-tag">
+                                    <span>🚌 אוטובוסים</span>
+                                </div>
+                            </div>
+                            
+                            <p class="fb-ad-hero-description" style="font-size: 1.1rem;">
+                                רובע המטרו תל אביב
+                            </p>
+                            
+                            <div class="fb-ad-price-tag">
+                                <span class="fb-ad-price-label">החל מ־</span>
+                                <span class="fb-ad-price-value">849,000 ₪</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="copy-overlay">
+                        <span class="copy-text">👆 לחץ להעתקה</span>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="copyImage('ad3')">📋 העתק תמונה</button>
+                    <button class="btn btn-secondary" onclick="downloadImage('ad3', 'metro-accessibility')">⬇️ הורד</button>
+                </div>
+                <div class="success-message" id="msg-ad3"></div>
+            </div>
+
+            <!-- Variation 4: Price Focus -->
+            <div class="ad-card">
+                <h3 class="ad-title">גרסה 4: דגש על מחיר</h3>
+                <div class="ad-image-container" onclick="copyImage('ad4')">
+                    <div class="fb-ad-image" id="ad4">
+                        <img src="metro-eyebird.png" alt="רובע המטרו" class="fb-ad-image-bg">
+                        <div class="fb-ad-image-overlay"></div>
+                        <div class="fb-ad-image-content">
+                            <div class="fb-ad-price-tag" style="margin-top: 0; margin-bottom: 1.5rem; padding: 1rem 2rem;">
+                                <span class="fb-ad-price-label" style="font-size: 1.2rem;">החל מ־</span>
+                                <span class="fb-ad-price-value" style="font-size: 3rem;">849,000 ₪</span>
+                            </div>
+                            
+                            <h2 class="fb-ad-hero-title" style="font-size: 2rem;">
+                                רובע המטרו
+                                <span class="highlight" style="font-size: 2rem;">תל אביב</span>
+                            </h2>
+                            
+                            <p class="fb-ad-hero-description">
+                                השקעה בעתיד העיר<br>
+                                בנקודה הנגישה ביותר בישראל
+                            </p>
+                        </div>
+                    </div>
+                    <div class="copy-overlay">
+                        <span class="copy-text">👆 לחץ להעתקה</span>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="copyImage('ad4')">📋 העתק תמונה</button>
+                    <button class="btn btn-secondary" onclick="downloadImage('ad4', 'metro-price')">⬇️ הורד</button>
+                </div>
+                <div class="success-message" id="msg-ad4"></div>
+            </div>
+
+            <!-- Variation 5: Simple & Bold -->
+            <div class="ad-card">
+                <h3 class="ad-title">גרסה 5: פשוטה ונועזת</h3>
+                <div class="ad-image-container" onclick="copyImage('ad5')">
+                    <div class="fb-ad-image" id="ad5">
+                        <img src="metro-eyebird.png" alt="רובע המטרו" class="fb-ad-image-bg">
+                        <div class="fb-ad-image-overlay"></div>
+                        <div class="fb-ad-image-content">
+                            <h2 class="fb-ad-hero-title" style="font-size: 3.5rem; line-height: 1.1;">
+                                <span class="highlight" style="font-size: 4rem;">רובע<br>המטרו</span>
+                            </h2>
+                            
+                            <p class="fb-ad-hero-description" style="font-size: 1.5rem; margin-top: 2rem;">
+                                תל אביב
+                            </p>
+                            
+                            <div class="fb-ad-price-tag" style="margin-top: 2rem;">
+                                <span class="fb-ad-price-value" style="font-size: 1.8rem;">849,000 ₪</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="copy-overlay">
+                        <span class="copy-text">👆 לחץ להעתקה</span>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="copyImage('ad5')">📋 העתק תמונה</button>
+                    <button class="btn btn-secondary" onclick="downloadImage('ad5', 'metro-bold')">⬇️ הורד</button>
+                </div>
+                <div class="success-message" id="msg-ad5"></div>
+            </div>
+
+            <!-- Variation 6: Future Vision -->
+            <div class="ad-card">
+                <h3 class="ad-title">גרסה 6: חזון העתיד</h3>
+                <div class="ad-image-container" onclick="copyImage('ad6')">
+                    <div class="fb-ad-image" id="ad6">
+                        <img src="metro-eyebird.png" alt="רובע המטרו" class="fb-ad-image-bg">
+                        <div class="fb-ad-image-overlay"></div>
+                        <div class="fb-ad-image-content">
+                            <p class="fb-ad-hero-description" style="font-size: 1.2rem; margin-bottom: 0.5rem;">
+                                עתיד תל אביב
+                            </p>
+                            
+                            <h2 class="fb-ad-hero-title">
+                                <span class="highlight" style="font-size: 3.5rem;">מתחיל</span>
+                                <span class="highlight" style="font-size: 3.5rem;">כאן</span>
+                            </h2>
+                            
+                            <p class="fb-ad-hero-description" style="margin-top: 1.5rem;">
+                                רובע המטרו תל אביב<br>
+                                הנקודה הנגישה ביותר בישראל
+                            </p>
+                            
+                            <div class="fb-ad-price-tag" style="margin-top: 1.5rem;">
+                                <span class="fb-ad-price-label">החל מ־</span>
+                                <span class="fb-ad-price-value">849,000 ₪</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="copy-overlay">
+                        <span class="copy-text">👆 לחץ להעתקה</span>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="copyImage('ad6')">📋 העתק תמונה</button>
+                    <button class="btn btn-secondary" onclick="downloadImage('ad6', 'metro-future')">⬇️ הורד</button>
+                </div>
+                <div class="success-message" id="msg-ad6"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Helper function to convert image to data URL
+        function imageToDataUrl(imgElement) {
+            return new Promise((resolve, reject) => {
+                const canvas = document.createElement('canvas');
+                canvas.width = imgElement.naturalWidth || imgElement.width;
+                canvas.height = imgElement.naturalHeight || imgElement.height;
+                const ctx = canvas.getContext('2d');
+                
+                try {
+                    ctx.drawImage(imgElement, 0, 0);
+                    resolve(canvas.toDataURL('image/png'));
+                } catch (e) {
+                    // Fallback: try loading fresh
+                    const img = new Image();
+                    img.onload = function() {
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        ctx.drawImage(img, 0, 0);
+                        try {
+                            resolve(canvas.toDataURL('image/png'));
+                        } catch (e2) {
+                            reject(e2);
+                        }
+                    };
+                    img.onerror = reject;
+                    img.src = imgElement.src;
+                }
+            });
+        }
+
+        async function copyImage(adId) {
+            const element = document.getElementById(adId);
+            const msgElement = document.getElementById('msg-' + adId);
+            
+            try {
+                msgElement.textContent = '⏳ מעתיק...';
+                msgElement.classList.add('show');
+                
+                // Clone and prepare element
+                const clone = element.cloneNode(true);
+                clone.style.position = 'fixed';
+                clone.style.left = '-9999px';
+                clone.style.top = '0';
+                clone.style.width = '1080px';
+                clone.style.height = '1080px';
+                clone.style.paddingBottom = '0';
+                document.body.appendChild(clone);
+                
+                // Convert images to data URLs
+                const originalImages = element.querySelectorAll('img');
+                const cloneImages = clone.querySelectorAll('img');
+                
+                for (let i = 0; i < originalImages.length; i++) {
+                    try {
+                        const dataUrl = await imageToDataUrl(originalImages[i]);
+                        cloneImages[i].src = dataUrl;
+                    } catch (e) {
+                        console.warn('Could not convert image:', e);
+                    }
+                }
+                
+                await new Promise(resolve => setTimeout(resolve, 300));
+                
+                // Create canvas
+                const canvas = await html2canvas(clone, {
+                    scale: 1,
+                    useCORS: false,
+                    allowTaint: false,
+                    backgroundColor: '#000000',
+                    scrollX: 0,
+                    scrollY: -window.scrollY,
+                    logging: false
+                });
+                
+                document.body.removeChild(clone);
+                
+                // Convert to blob and copy
+                canvas.toBlob(async (blob) => {
+                    try {
+                        await navigator.clipboard.write([
+                            new ClipboardItem({ 'image/png': blob })
+                        ]);
+                        msgElement.textContent = '✅ הועתק ללוח!';
+                        setTimeout(() => {
+                            msgElement.classList.remove('show');
+                        }, 2000);
+                    } catch (err) {
+                        console.error('Copy failed:', err);
+                        msgElement.textContent = '❌ שגיאה - נסה להוריד במקום';
+                    }
+                }, 'image/png');
+                
+            } catch (error) {
+                console.error('Error:', error);
+                msgElement.textContent = '❌ שגיאה בהעתקה';
+                setTimeout(() => {
+                    msgElement.classList.remove('show');
+                }, 2000);
+            }
+        }
+
+        async function downloadImage(adId, filename) {
+            const element = document.getElementById(adId);
+            const msgElement = document.getElementById('msg-' + adId);
+            
+            try {
+                msgElement.textContent = '⏳ מוריד...';
+                msgElement.classList.add('show');
+                
+                // Clone and prepare element
+                const clone = element.cloneNode(true);
+                clone.style.position = 'fixed';
+                clone.style.left = '-9999px';
+                clone.style.top = '0';
+                clone.style.width = '1080px';
+                clone.style.height = '1080px';
+                clone.style.paddingBottom = '0';
+                document.body.appendChild(clone);
+                
+                // Convert images to data URLs
+                const originalImages = element.querySelectorAll('img');
+                const cloneImages = clone.querySelectorAll('img');
+                
+                for (let i = 0; i < originalImages.length; i++) {
+                    try {
+                        const dataUrl = await imageToDataUrl(originalImages[i]);
+                        cloneImages[i].src = dataUrl;
+                    } catch (e) {
+                        console.warn('Could not convert image:', e);
+                    }
+                }
+                
+                await new Promise(resolve => setTimeout(resolve, 300));
+                
+                // Create canvas
+                const canvas = await html2canvas(clone, {
+                    scale: 1,
+                    useCORS: false,
+                    allowTaint: false,
+                    backgroundColor: '#000000',
+                    scrollX: 0,
+                    scrollY: -window.scrollY,
+                    logging: false
+                });
+                
+                document.body.removeChild(clone);
+                
+                // Download
+                canvas.toBlob((blob) => {
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.download = `${filename}-${new Date().getTime()}.png`;
+                    link.href = url;
+                    link.click();
+                    URL.revokeObjectURL(url);
+                    
+                    msgElement.textContent = '✅ הורדה הושלמה!';
+                    setTimeout(() => {
+                        msgElement.classList.remove('show');
+                    }, 2000);
+                }, 'image/png');
+                
+            } catch (error) {
+                console.error('Error:', error);
+                msgElement.textContent = '❌ שגיאה בהורדה';
+                setTimeout(() => {
+                    msgElement.classList.remove('show');
+                }, 2000);
+            }
+        }
+    </script>
+</body>
+</html>
+
