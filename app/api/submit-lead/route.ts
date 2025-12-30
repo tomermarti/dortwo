@@ -12,6 +12,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Clean data for all integrations
+    const cleanPhone = phone.replace(/[^0-9]/g, '')
+    const cleanName = name.replace(/"/g, '\\"')
+    
     // Monday.com API integration
     const mondayApiKey = process.env.MONDAY_API_KEY
     const mondayBoardId = process.env.MONDAY_BOARD_ID
@@ -22,86 +26,117 @@ export async function POST(request: NextRequest) {
       boardId: mondayBoardId
     })
 
+    let mondayItemId = null
+    
     if (!mondayApiKey || !mondayBoardId) {
-      console.error('Monday.com credentials not configured')
-      return NextResponse.json(
-        { error: 'שגיאה בהגדרות המערכת' },
-        { status: 500 }
-      )
-    }
-
-    // Create item in Monday.com - Simplified and more robust
-    const cleanPhone = phone.replace(/[^0-9]/g, '')
-    const cleanName = name.replace(/"/g, '\\"')
-    
-    console.log('Creating lead:', { name: cleanName, phone: cleanPhone })
-    
-    // Use variables instead of inline strings to avoid escaping issues
-    const mondayQuery = `
-      mutation($boardId: ID!, $itemName: String!, $columnValues: JSON!) {
-        create_item (
-          board_id: $boardId
-          item_name: $itemName
-          column_values: $columnValues
-        ) {
-          id
-          name
+      console.warn('Monday.com credentials not configured - skipping Monday integration')
+    } else {
+      // Create item in Monday.com - Simplified and more robust
+      console.log('Creating lead:', { name: cleanName, phone: cleanPhone })
+      
+      // Use variables instead of inline strings to avoid escaping issues
+      const mondayQuery = `
+        mutation($boardId: ID!, $itemName: String!, $columnValues: JSON!) {
+          create_item (
+            board_id: $boardId
+            item_name: $itemName
+            column_values: $columnValues
+          ) {
+            id
+            name
+          }
         }
+      `
+      
+      const variables = {
+        boardId: mondayBoardId,
+        itemName: name,
+        columnValues: JSON.stringify({
+          "phone_mktsh1jg": cleanPhone,
+          "priority_1": {
+            "label": "אתר אינטרנט"
+          }
+        })
       }
-    `
-    
-    const variables = {
-      boardId: mondayBoardId,
-      itemName: name,
-      columnValues: JSON.stringify({
-        "phone_mktsh1jg": cleanPhone,
-        "priority_1": {
-          "label": "אתר אינטרנט"
-        }
+      
+      console.log('Monday query:', mondayQuery)
+      console.log('Variables:', variables)
+
+      const mondayResponse = await fetch('https://api.monday.com/v2', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': mondayApiKey,
+        },
+        body: JSON.stringify({
+          query: mondayQuery,
+          variables: variables
+        })
       })
-    }
-    
-    console.log('Monday query:', mondayQuery)
-    console.log('Variables:', variables)
 
-    const mondayResponse = await fetch('https://api.monday.com/v2', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': mondayApiKey,
-      },
-      body: JSON.stringify({
-        query: mondayQuery,
-        variables: variables
+      if (!mondayResponse.ok) {
+        const errorText = await mondayResponse.text()
+        console.error('Monday.com API error:', errorText)
+        return NextResponse.json(
+          { error: 'שגיאה בשמירת הפרטים', details: errorText },
+          { status: 500 }
+        )
+      }
+
+      const mondayData = await mondayResponse.json()
+      
+      if (mondayData.errors) {
+        console.error('Monday.com GraphQL errors:', mondayData.errors)
+        return NextResponse.json(
+          { error: 'שגיאה בשמירת הפרטים', details: mondayData.errors },
+          { status: 500 }
+        )
+      }
+      
+      mondayItemId = mondayData.data?.create_item?.id
+    }
+
+    // Send data to Make.com webhook
+    try {
+      const makeWebhookUrl = 'https://hook.eu2.make.com/uatk47itcov5t98aj9ojiaiiwwvhhpck'
+      
+      const webhookPayload = {
+        name,
+        phone: cleanPhone,
+        email: email || '',
+        utmCampaign: utmCampaign || '',
+        utmAdset: utmAdset || '',
+        utmAd: utmAd || '',
+        source: 'website_lead_form',
+        timestamp: new Date().toISOString(),
+        mondayItemId: mondayItemId
+      }
+
+      console.log('Sending to Make.com webhook:', webhookPayload)
+
+      const makeResponse = await fetch(makeWebhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(webhookPayload)
       })
-    })
 
-    if (!mondayResponse.ok) {
-      const errorText = await mondayResponse.text()
-      console.error('Monday.com API error:', errorText)
-      return NextResponse.json(
-        { error: 'שגיאה בשמירת הפרטים', details: errorText },
-        { status: 500 }
-      )
+      if (!makeResponse.ok) {
+        console.error('Make.com webhook error:', makeResponse.status, await makeResponse.text())
+        // Don't fail the entire request if webhook fails
+      } else {
+        console.log('Make.com webhook sent successfully')
+      }
+    } catch (webhookError) {
+      console.error('Error sending to Make.com webhook:', webhookError)
+      // Don't fail the entire request if webhook fails
     }
-
-    const mondayData = await mondayResponse.json()
-    
-    if (mondayData.errors) {
-      console.error('Monday.com GraphQL errors:', mondayData.errors)
-      return NextResponse.json(
-        { error: 'שגיאה בשמירת הפרטים', details: mondayData.errors },
-        { status: 500 }
-      )
-    }
-
-    // Optional: Send email notification or SMS
-    // You can add additional integrations here
 
     return NextResponse.json({
       success: true,
       message: 'הפרטים נשמרו בהצלחה',
-      leadId: mondayData.data?.create_item?.id
+      leadId: mondayItemId
     })
 
   } catch (error) {

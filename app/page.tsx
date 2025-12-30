@@ -117,6 +117,22 @@ export default function Home() {
     }
   ]
 
+  const validatePhoneNumber = (phone: string) => {
+    // Israeli phone number validation
+    // Accepts formats: 05X-XXXXXXX, 05XXXXXXXXX, +972-5X-XXXXXXX, +9725XXXXXXXXX
+    const phoneRegex = /^(\+972[-\s]?)?0?5[0-9][-\s]?[0-9]{3}[-\s]?[0-9]{4}$/
+    const cleanPhone = phone.replace(/[-\s]/g, '')
+    
+    // Check if it's a valid Israeli mobile number
+    if (cleanPhone.startsWith('+972')) {
+      return /^\+9725[0-9]{8}$/.test(cleanPhone)
+    } else if (cleanPhone.startsWith('05')) {
+      return /^05[0-9]{8}$/.test(cleanPhone)
+    }
+    
+    return false
+  }
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLeadData({
       ...leadData,
@@ -128,6 +144,14 @@ export default function Home() {
     e.preventDefault()
     setIsSubmitting(true)
     console.log('DEBUG: Submitting form', leadData);
+    
+    // Validate phone number
+    if (!validatePhoneNumber(leadData.phone)) {
+      setSubmitMessage('אנא הזינו מספר טלפון ישראלי תקין (05X-XXXXXXX)')
+      setIsSubmitting(false)
+      setTimeout(() => setSubmitMessage(''), 5000)
+      return
+    }
     
     try {
       const response = await fetch('/api/submit-lead', {

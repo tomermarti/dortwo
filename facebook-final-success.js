@@ -239,3 +239,4 @@ module.exports = { createFinalRedAd };
 if (require.main === module) {
   createFinalRedAd();
 }
+

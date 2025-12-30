@@ -153,3 +153,4 @@ module.exports = { checkAccountAccess };
 if (require.main === module) {
   checkAccountAccess();
 }
+
